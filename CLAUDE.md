@@ -144,7 +144,19 @@ Week 3 in progress (2026-10-23). Repo moved to github.com/wnubhav/Autograder_Pro
 Grades now (max possible 80): add 65.0, add_crash 28.5, add_good 80.0, add_infinite 25.0,
 add_leak 68.5, add_loop 55.5, add_messy 64.5, add_syntax_error 13.0. Two runs identical.
 
-Next: readability (LLM), originality, report writer.
+- `analyzers/llm_review.py` (readability with Ollama, qwen2.5-coder:1.5b, temperature 0, seed 42,
+  answers cached in cache/llm/<sha256 of code+prompt+model+temperature+seed>.json; stops the
+  whole run with a clear message if Ollama is not running). Written and tested against a fake
+  server only: the Ollama download was too slow. It stays registered but rules/add.json does
+  not use it. To switch back, set the readability metric's analyzer to "llm_review" with
+  params { "model": "qwen2.5-coder:1.5b", "temperature": 0, "seed": 42 }.
+- `analyzers/readability_rules.py` (readability, no AI, used now): average of three parts,
+  each 0..1 with a short reason: comments (commented lines / non-empty lines, compared with
+  min_comment_ratio 0.1), names (share of basic-type variable and parameter names with at
+  least min_name_length 2 characters; i, j, k allowed), lines (share of lines at most
+  max_line_length 80). Names are found with regexes, not a parser.
+
+Next: originality, report writer.
 
 ## Notes
 - The brief has two slips: the sample input "75" should be "7 5", and the example report lists

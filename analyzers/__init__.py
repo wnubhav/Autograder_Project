@@ -14,6 +14,8 @@ from analyzers.complexity_estimator import analyze as complexity_estimator
 from analyzers.edge_case_runner import analyze as edge_case_runner
 from analyzers.function_split import analyze as function_split
 from analyzers.io_tests import analyze as io_tests
+from analyzers.llm_review import analyze as llm_review
+from analyzers.readability_rules import analyze as readability_rules
 from analyzers.sanitizer_run import analyze as sanitizer_run
 from analyzers.static_analysis import analyze as static_analysis
 
@@ -25,6 +27,8 @@ REGISTRY = {
     "sanitizer_run": sanitizer_run,
     "edge_case_runner": edge_case_runner,
     "complexity_estimator": complexity_estimator,
+    "llm_review": llm_review,  # not used by rules/add.json now, see CLAUDE.md
+    "readability_rules": readability_rules,
 }
 
 # Analyzers that have to run the compiled program. The coordinator skips them

@@ -50,9 +50,9 @@
     },
     {
       "name": "readability",
-      "analyzer": "llm_review",
+      "analyzer": "readability_rules",
       "weight": 0.10,
-      "params": { "model": "llama3.1", "temperature": 0, "seed": 42 }
+      "params": { "min_comment_ratio": 0.1, "min_name_length": 2, "max_line_length": 80 }
     },
     {
       "name": "originality",
