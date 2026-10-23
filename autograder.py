@@ -59,12 +59,15 @@ def grade_submission(source_path, rules, versions):
     first_pass = run_first_pass(source_path, rules)
 
     metrics = {}
+    flags = []  # things the teacher should look at; they never change the grade
     grade = 0.0
     for metric in rules["metrics"]:
         result = run_metric(metric, source_path, first_pass, rules)
         result["weight"] = metric["weight"]
         metrics[metric["name"]] = result
         grade += metric["weight"] * result["score"]
+        if "flag" in result:
+            flags.append(f"{metric['name']}: {result['flag']}")
 
     return {
         "submission": source_path,
@@ -73,6 +76,7 @@ def grade_submission(source_path, rules, versions):
         "tool_versions": versions,
         "first_pass": first_pass,
         "metrics": metrics,
+        "flags": flags,
     }
 
 
@@ -100,6 +104,8 @@ def print_summary(report):
                              if r.get("implemented") is not False)
         line += f"  ({missing} metrics not implemented yet, max possible now {possible:.0f})"
     print(line)
+    for flag in report["flags"]:
+        print(f"   FLAG {flag}")
 
 
 def main():

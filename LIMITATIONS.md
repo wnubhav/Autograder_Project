@@ -111,3 +111,24 @@ from an O(n) counting trick, and it cannot require O(log n) at all.
 The input pattern (`"input": "{n} {n}"` in the rules) also has to make the
 work depend on n. That works for "add two integers" only because a slow
 solution loops up to the value of the numbers.
+
+## Originality: short programs look copied even when they are not
+
+The originality check replaces every name with `ID` and every number with
+`NUM`, so that renaming variables cannot hide a copy. For a tiny program
+this works against honest students. We wrote a solution on its own, with
+`int x, y;`, `scanf("%d %d", &x, &y);` and `printf("%d\n", x + y);`, and
+compared it with the brief's `add.c`, which uses `a` and `b`. The
+similarity is 0.90, above the 0.85 threshold, so the agent flags it as
+suspected copying. Almost every student who writes the obvious solution
+would be flagged against every other. This is why a flag never lowers the
+score and a teacher has to look at it. For short problems the threshold
+should be higher, or the check should be switched off.
+
+## Originality: a flag does not cost any points
+
+Because a flag never changes the score, the originality metric always gives
+1.0. `submissions/add_copy.c` is `add_good.c` with every name changed; the
+agent finds it (similarity 1.00) but still gives it 100 / 100. The grade
+alone does not show the problem; only the flag in the report does, so a
+teacher who reads only the grade misses it.

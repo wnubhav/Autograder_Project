@@ -1,12 +1,20 @@
-"""Originality checker: compares a C file against a folder of other C files.
+"""Originality analyzer: compare the submission with a folder of other C files.
 
 Steps: remove comments/strings -> turn code into tokens -> replace names with ID
 and numbers with NUM -> cut into overlapping 5-token pieces -> compare the sets.
+Renaming variables or changing numbers therefore does not hide a copy.
+
+The corpus (params["corpus_dir"]) can hold other students' files, and also
+code found online or written by an LLM; every *.c file in it, in any
+sub-folder, is compared. The submission itself is skipped.
+
+A similarity at or above params["flag_threshold"] only raises a flag for the
+teacher. It never lowers the score: two students can write the same short
+program on their own, so a human has to decide. The score is always 1.0.
 """
 import glob
 import os
 import re
-import sys
 
 KEYWORDS = {
     "int", "long", "short", "char", "float", "double", "void", "unsigned", "signed",
@@ -45,26 +53,29 @@ def similarity(a, b, k=5):
     return len(A & B) / min(len(A), len(B))   # share of the smaller file found in the other
 
 
-def check(student_file, corpus_dir, threshold=0.85):
-    me = normalize(open(student_file).read())
+def analyze(source_path, first_pass, params, rules):
+    threshold = params.get("flag_threshold", 0.85)
+    with open(source_path, errors="replace") as f:
+        me = normalize(f.read())
+
     best, match = 0.0, None
-    for f in sorted(glob.glob(os.path.join(corpus_dir, "**", "*.c"), recursive=True)):
-        if os.path.abspath(f) == os.path.abspath(student_file):
+    pattern = os.path.join(params["corpus_dir"], "**", "*.c")
+    for other in sorted(glob.glob(pattern, recursive=True)):
+        if os.path.abspath(other) == os.path.abspath(source_path):
             continue
-        s = similarity(me, normalize(open(f).read()))
+        with open(other, errors="replace") as f:
+            s = similarity(me, normalize(f.read()))
         if s > best:
-            best, match = s, f
-    flagged = best >= threshold
-    return {
-        "metric": "originality",
-        "score": 0.0 if flagged else 1.0,
-        "evidence": {"max_similarity": round(best, 2), "closest_file": match},
-        "flagged_for_teacher": flagged,
-        "feedback": (f"Very similar to {os.path.basename(match)}; sent for manual review."
-                     if flagged else "No close match found."),
+            best, match = s, other
+
+    result = {
+        "score": 1.0,
+        "evidence": {"max_similarity": round(best, 2), "closest_file": match,
+                     "flag_threshold": threshold},
+        "feedback": f"max similarity {best:.2f} with {match} (not flagged)",
     }
-
-
-if __name__ == "__main__":
-    import json
-    print(json.dumps(check(sys.argv[1], sys.argv[2]), indent=2))
+    if best >= threshold:
+        result["flag"] = (f"suspected copying: similarity {best:.2f} with {match} "
+                          f"(threshold {threshold}); please check by hand")
+        result["feedback"] = f"max similarity {best:.2f} with {match}: flagged for the teacher"
+    return result

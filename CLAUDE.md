@@ -30,7 +30,7 @@ Hard requirements from the brief:
 - Readability: Ollama at temperature 0 with a fixed seed. Cache answers by hash(code + prompt + model).
 - Originality: strip comments, replace names with ID and numbers with NUM, compare 5-token
   k-gram sets against a corpus folder (submissions/, ai/, web/). Flag at or above 0.85; never auto-zero.
-  A working prototype exists in `originality.py`.
+  Implemented in `analyzers/similarity_flag.py` (was the `originality.py` prototype).
 - Reports: `reports/<name>.json` (with the rules SHA-256 and tool versions) plus a text report.
   `reports/` is git-ignored because it is rebuilt on every run. In Week 4, save the final outputs
   for all samples to a committed `sample_outputs/` folder, since the brief requires them.
@@ -156,7 +156,16 @@ add_leak 68.5, add_loop 55.5, add_messy 64.5, add_syntax_error 13.0. Two runs id
   least min_name_length 2 characters; i, j, k allowed), lines (share of lines at most
   max_line_length 80). Names are found with regexes, not a parser.
 
-Next: originality, report writer.
+- `analyzers/similarity_flag.py` (originality, moved from `originality.py`): normalized 5-token
+  k-grams against every *.c in corpus_dir (submission itself skipped). Score is always 1.0;
+  similarity >= flag_threshold adds a "flag" to the result, and the coordinator collects
+  these into the report's "flags" list (printed as FLAG lines). It never lowers the grade.
+- New sample `submissions/add_copy.c`: add_good.c with every name changed; similarity 1.00
+  with add_good.c, so both get flagged.
+- LIMITATIONS.md: 2 originality entries (honest short solution flagged at 0.90; a flag
+  costs no points).
+
+Next: report writer.
 
 ## Notes
 - The brief has two slips: the sample input "75" should be "7 5", and the example report lists
