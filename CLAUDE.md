@@ -165,7 +165,16 @@ add_leak 68.5, add_loop 55.5, add_messy 64.5, add_syntax_error 13.0. Two runs id
 - LIMITATIONS.md: 2 originality entries (honest short solution flagged at 0.90; a flag
   costs no points).
 
-Next: report writer.
+- Report writer: `autograder.py` builds the summary with `summary_text(report)`, prints it and
+  saves the same text to `reports/<name>.txt` next to `reports/<name>.json`. The text can
+  differ between runs when it quotes timings (add_loop's complexity feedback), so the
+  reproducibility check compares grades, scores and flags, not the text files.
+
+Grades now (all 9 metrics, out of 100): add 78.33, add_copy 100.0 (flagged), add_crash 46.28,
+add_good 100.0 (flagged), add_infinite 41.67, add_leak 88.5, add_loop 70.28, add_messy 81.35,
+add_syntax_error 26.33. Two runs identical (grades, scores, flags).
+
+Week 3 is done. Next is Week 4: sample_outputs/, usefulness/limitations, README, video, report.
 
 ## Notes
 - The brief has two slips: the sample input "75" should be "7 5", and the example report lists

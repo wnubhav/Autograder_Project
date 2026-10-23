@@ -4,7 +4,7 @@ For each submission:
   1. run the first pass (regex checks, plain compile, smoke run)
   2. run the analyzer named by each metric in the rules file
   3. grade = 100 x sum(weight x score)
-  4. print a summary and save reports/<name>.json
+  4. print a summary and save reports/<name>.json and reports/<name>.txt
 
 A metric whose analyzer is not written yet scores 0, and the summary says so.
 
@@ -80,7 +80,8 @@ def grade_submission(source_path, rules, versions):
     }
 
 
-def print_summary(report):
+def summary_text(report):
+    """The short summary that is printed and also saved as reports/<name>.txt."""
     fp = report["first_pass"]
     if not fp["compiled"]:
         status = "does not compile"
@@ -89,23 +90,24 @@ def print_summary(report):
         if fp["suspected_infinite_loop"]:
             status += " (suspected infinite loop: only source-based analyzers run)"
 
-    print(f"== {os.path.basename(report['submission'])}")
-    print(f"   first pass: {status}")
+    lines = [f"== {os.path.basename(report['submission'])}",
+             f"   first pass: {status}"]
     missing = 0
     for name, result in report["metrics"].items():
         if result.get("implemented") is False:
             missing += 1
-            print(f"   {name:14} ----  x {result['weight']:.2f}  not implemented yet")
+            lines.append(f"   {name:14} ----  x {result['weight']:.2f}  not implemented yet")
         else:
-            print(f"   {name:14} {result['score']:.2f} x {result['weight']:.2f}  {result['feedback']}")
+            lines.append(f"   {name:14} {result['score']:.2f} x {result['weight']:.2f}  {result['feedback']}")
     line = f"   grade {report['grade']:.1f} / 100"
     if missing:
         possible = 100 * sum(r["weight"] for r in report["metrics"].values()
                              if r.get("implemented") is not False)
         line += f"  ({missing} metrics not implemented yet, max possible now {possible:.0f})"
-    print(line)
+    lines.append(line)
     for flag in report["flags"]:
-        print(f"   FLAG {flag}")
+        lines.append(f"   FLAG {flag}")
+    return "\n".join(lines) + "\n"
 
 
 def main():
@@ -119,12 +121,16 @@ def main():
 
     for source_path in sys.argv[2:]:
         report = grade_submission(source_path, rules, versions)
-        print_summary(report)
+        text = summary_text(report)
+        print(text, end="")
         name = os.path.splitext(os.path.basename(source_path))[0]
-        report_path = os.path.join("reports", name + ".json")
-        with open(report_path, "w") as f:
+        json_path = os.path.join("reports", name + ".json")
+        with open(json_path, "w") as f:
             json.dump(report, f, indent=2)
-        print(f"   report: {report_path}\n")
+        text_path = os.path.join("reports", name + ".txt")
+        with open(text_path, "w") as f:
+            f.write(text)
+        print(f"   reports: {json_path}, {text_path}\n")
 
 
 if __name__ == "__main__":
