@@ -178,6 +178,8 @@ Readability switched to Groq (2026-10-23):
   A new or edited submission needs the key (no key and no cached answer stops the run with a message).
 - The model sometimes packs all reasons into one string joined by '","'; the feedback line splits it.
 - `readability_rules.py` removed.
+- LIMITATIONS.md: 3 readability entries (model also punishes the syntax error: 3/10 vs add.c 6/10;
+  new submissions need internet + key; student code is sent to Groq).
 
 Grades now (out of 100): add 81.0, add_copy 97.0 (flagged), add_crash 43.5, add_good 99.0
 (flagged), add_infinite 40.0, add_leak 86.5, add_loop 73.5, add_messy 77.5, add_syntax_error 26.0.

@@ -132,3 +132,38 @@ Because a flag never changes the score, the originality metric always gives
 agent finds it (similarity 1.00) but still gives it 100 / 100. The grade
 alone does not show the problem; only the flag in the report does, so a
 teacher who reads only the grade misses it.
+
+## Readability: the model also punishes a syntax error
+
+The prompt tells the model to judge only readability, not correctness, but
+it does not always follow that. `submissions/add_syntax_error.c` is neatly
+indented and spaced, more so than `submissions/add.c`, and differs from a
+correct program only by one missing `;`. The model gave it 3/10 and listed
+"Missing semicolon after scanf reduces readability" as a reason, while the
+more cramped `add.c` got 6/10. The same mistake is already counted by the
+syntax metric (0) and the structure metric (cppcheck's unknownMacro), so one
+missing character costs points in three places. The model also mentioned
+the infinite loop in `add_infinite.c`, which is a correctness problem.
+
+## Readability: new submissions need an internet connection
+
+Only answers that are already in `cache/llm/` can be graded offline. The
+cache key is a hash of the exact code, so any change to a submission, even
+one added space or a renamed variable, needs a fresh answer from Groq. A
+new student's file, graded on a machine with no internet or without the
+`GROQ_API_KEY` environment variable set, stops the whole run with an error
+instead of giving a grade. The run also stops if Groq is down, if the free
+rate limit is used up, or if Groq retires the model in the rules. That
+already happened once: the brief's `llama-3.3-70b-versatile` was no longer
+served, so we had to switch to `openai/gpt-oss-120b`.
+
+## Readability: student code is sent to Groq's servers
+
+To get a readability score, the full source file is sent to Groq, an outside
+company, over the internet. Anything the student wrote in the file goes with
+it, for example their name or student number in a header comment. The
+students are not asked first, and what Groq does with the code is set by
+Groq's terms, not by us. A school that is not allowed to share student work
+with outside services cannot use this metric as it is. It would need a local
+model (the earlier Ollama plan) or the readability metric removed from the
+rules.
