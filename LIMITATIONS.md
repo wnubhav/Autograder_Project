@@ -87,3 +87,27 @@ as a real problem. This can only lower the student's own score, so it is not
 useful for cheating, but it shows that the analyzer trusts text that the
 student's code controls. A clean-looking program could also print confusing
 lines that make the evidence hard to read.
+
+## Complexity: process start-up hides small growth
+
+Every timed run includes about 4 ms just to start the program. For
+`submissions/add_loop.c`, which adds by counting one step at a time (O(n)),
+the time goes from 0.008 s at n = 1,000,000 to 0.219 s at n = 100,000,000.
+A true O(n) curve would give a growth of 1, but we measure about 0.73,
+because the start-up time makes the small size look slower than it is.
+A program whose loop is fast enough to finish in a few milliseconds even at
+the largest size would show almost no growth and be wrongly called O(1).
+The brief's own sizes `[1, 10, 100]` show this clearly: at those sizes every
+program, slow or fast, takes about 4 ms, so we had to raise the sizes in the
+rules to `[1000000, 10000000, 100000000]`.
+
+## Complexity: only a few classes, and similar ones look the same
+
+The estimator only knows O(1), O(n), O(n^2) and "worse". It compares just
+the smallest and the largest size, so O(log n) looks like O(1) (the time
+barely grows) and O(n log n) looks like O(n). If an instructor requires
+O(n log n) for a sorting problem, the agent cannot tell a correct merge sort
+from an O(n) counting trick, and it cannot require O(log n) at all.
+The input pattern (`"input": "{n} {n}"` in the rules) also has to make the
+work depend on n. That works for "add two integers" only because a slow
+solution loops up to the value of the numbers.

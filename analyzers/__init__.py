@@ -10,6 +10,7 @@ We fill this in as we write each analyzer.
 """
 
 from analyzers.compiler_warnings import analyze as compiler_warnings
+from analyzers.complexity_estimator import analyze as complexity_estimator
 from analyzers.edge_case_runner import analyze as edge_case_runner
 from analyzers.function_split import analyze as function_split
 from analyzers.io_tests import analyze as io_tests
@@ -23,6 +24,7 @@ REGISTRY = {
     "function_split": function_split,
     "sanitizer_run": sanitizer_run,
     "edge_case_runner": edge_case_runner,
+    "complexity_estimator": complexity_estimator,
 }
 
 # Analyzers that have to run the compiled program. The coordinator skips them

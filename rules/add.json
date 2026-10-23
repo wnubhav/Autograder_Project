@@ -39,7 +39,8 @@
       "name": "complexity",
       "analyzer": "complexity_estimator",
       "weight": 0.10,
-      "params": { "required": "O(1)", "sizes": [1, 10, 100] }
+      "params": { "required": "O(1)", "sizes": [1000000, 10000000, 100000000],
+                  "input": "{n} {n}" }
     },
     {
       "name": "memory_safety",

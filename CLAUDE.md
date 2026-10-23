@@ -127,8 +127,24 @@ Committed with the Week 2 wrap-up:
 Grades now (max possible 70): add 55.0, add_crash 28.5, add_good 70.0, add_infinite 25.0,
 add_leak 58.5, add_messy 54.5, add_syntax_error 13.0. Two runs identical (incl. failures).
 
-Week 2 analyzers are all done. Next is Week 3: complexity, readability (LLM), originality,
-report writer.
+Week 2 analyzers are all done.
+
+Week 3 in progress (2026-10-23). Repo moved to github.com/wnubhav/Autograder_Project
+(history squashed into one "Initial commit"; old repo deleted).
+- `analyzers/complexity_estimator.py`: for each size n, input = params["input"].format(n=n)
+  (`"{n} {n}"` for add), median of 5 runs. growth = log(time ratio) / log(size ratio) between
+  the smallest and largest size only. growth < 0.3 is O(1), < 1.5 is O(n), < 2.5 is O(n^2),
+  otherwise worse. score = 1 if the class is the required one or better, else 0. A timeout or
+  crash at any size also gives 0.
+- Rules sizes changed from the brief's [1, 10, 100] to [1000000, 10000000, 100000000]: at the
+  small sizes every program takes about 4 ms (process start-up), so nothing can be told apart.
+- New sample `submissions/add_loop.c`: adds by counting (O(n)), growth about 0.73.
+- LIMITATIONS.md: 2 new complexity entries (start-up time hides growth; few classes).
+
+Grades now (max possible 80): add 65.0, add_crash 28.5, add_good 80.0, add_infinite 25.0,
+add_leak 68.5, add_loop 55.5, add_messy 64.5, add_syntax_error 13.0. Two runs identical.
+
+Next: readability (LLM), originality, report writer.
 
 ## Notes
 - The brief has two slips: the sample input "75" should be "7 5", and the example report lists
