@@ -1,0 +1,125 @@
+"""AutoGrader coordinator (entry point).
+
+For each submission:
+  1. run the first pass (regex checks, plain compile, smoke run)
+  2. run the analyzer named by each metric in the rules file
+  3. grade = 100 x sum(weight x score)
+  4. print a summary and save reports/<name>.json
+
+A metric whose analyzer is not written yet scores 0, and the summary says so.
+
+Usage:
+    python3 autograder.py rules/add.json submissions/*.c
+"""
+
+import json
+import os
+import platform
+import subprocess
+import sys
+
+import lizard
+
+from analyzers import NEEDS_BINARY, REGISTRY
+from first_pass import run_first_pass
+from rules import load_rules
+
+
+def tool_versions():
+    """Versions go into the report, so a grade can be reproduced with the same tools."""
+    gcc = subprocess.run(["gcc", "--version"], capture_output=True, text=True)
+    cppcheck = subprocess.run(["cppcheck", "--version"], capture_output=True, text=True)
+    return {"python": platform.python_version(), "gcc": gcc.stdout.splitlines()[0],
+            "cppcheck": cppcheck.stdout.strip(), "lizard": lizard.version}
+
+
+def run_metric(metric, source_path, first_pass, rules):
+    """Run one metric's analyzer. Always returns a result, even if the analyzer fails."""
+    analyzer = metric["analyzer"]
+    if analyzer not in REGISTRY:
+        return {"score": 0.0, "evidence": {}, "feedback": "not implemented yet",
+                "implemented": False}
+
+    if analyzer in NEEDS_BINARY and not first_pass["can_run"]:
+        reason = ("suspected infinite loop (smoke run timed out)"
+                  if first_pass["suspected_infinite_loop"] else "does not compile")
+        return {"score": 0.0, "evidence": {"skipped": reason}, "feedback": f"not run: {reason}"}
+
+    try:
+        result = REGISTRY[analyzer](source_path, first_pass, metric["params"], rules)
+    except Exception as error:
+        # A bug in one analyzer should not stop the whole grading run.
+        return {"score": 0.0, "evidence": {"error": repr(error)},
+                "feedback": f"analyzer failed: {error}"}
+    result["score"] = round(result["score"], 4)
+    return result
+
+
+def grade_submission(source_path, rules, versions):
+    first_pass = run_first_pass(source_path, rules)
+
+    metrics = {}
+    grade = 0.0
+    for metric in rules["metrics"]:
+        result = run_metric(metric, source_path, first_pass, rules)
+        result["weight"] = metric["weight"]
+        metrics[metric["name"]] = result
+        grade += metric["weight"] * result["score"]
+
+    return {
+        "submission": source_path,
+        "grade": round(100 * grade, 2),
+        "rules_sha256": rules["sha256"],
+        "tool_versions": versions,
+        "first_pass": first_pass,
+        "metrics": metrics,
+    }
+
+
+def print_summary(report):
+    fp = report["first_pass"]
+    if not fp["compiled"]:
+        status = "does not compile"
+    else:
+        status = f"compiled, smoke run {fp['smoke']['status']}"
+        if fp["suspected_infinite_loop"]:
+            status += " (suspected infinite loop: only source-based analyzers run)"
+
+    print(f"== {os.path.basename(report['submission'])}")
+    print(f"   first pass: {status}")
+    missing = 0
+    for name, result in report["metrics"].items():
+        if result.get("implemented") is False:
+            missing += 1
+            print(f"   {name:14} ----  x {result['weight']:.2f}  not implemented yet")
+        else:
+            print(f"   {name:14} {result['score']:.2f} x {result['weight']:.2f}  {result['feedback']}")
+    line = f"   grade {report['grade']:.1f} / 100"
+    if missing:
+        possible = 100 * sum(r["weight"] for r in report["metrics"].values()
+                             if r.get("implemented") is not False)
+        line += f"  ({missing} metrics not implemented yet, max possible now {possible:.0f})"
+    print(line)
+
+
+def main():
+    if len(sys.argv) < 3:
+        print("usage: python3 autograder.py RULES.json SUBMISSION.c [MORE.c ...]")
+        sys.exit(1)
+
+    rules = load_rules(sys.argv[1])
+    versions = tool_versions()
+    os.makedirs("reports", exist_ok=True)
+
+    for source_path in sys.argv[2:]:
+        report = grade_submission(source_path, rules, versions)
+        print_summary(report)
+        name = os.path.splitext(os.path.basename(source_path))[0]
+        report_path = os.path.join("reports", name + ".json")
+        with open(report_path, "w") as f:
+            json.dump(report, f, indent=2)
+        print(f"   report: {report_path}\n")
+
+
+if __name__ == "__main__":
+    main()

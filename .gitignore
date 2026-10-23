@@ -1,0 +1,11 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Compiled student programs and scratch files made while grading
+build/
+
+# Generated reports (rebuilt on every run). Final outputs go in sample_outputs/ in Week 4.
+reports/*
+!reports/.gitkeep

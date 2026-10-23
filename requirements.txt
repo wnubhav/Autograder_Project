@@ -1,0 +1,3 @@
+# Python packages (install with: pip install -r requirements.txt)
+# Pinned so the same submission gets the same structure score on every machine.
+lizard==1.24.2
