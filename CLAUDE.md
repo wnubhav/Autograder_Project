@@ -15,7 +15,7 @@ Hard requirements from the brief:
 - Final report needs a "Usefulness and Limitations" section with 3-4 concrete examples each.
 
 ## Design already agreed (keep it simple, no unnecessary complexity)
-- Python 3 on Linux/WSL. Tools: gcc, lizard, cppcheck, ASan/UBSan, Valgrind, Ollama (local LLM, Week 3).
+- Python 3 on Linux/WSL. Tools: gcc, lizard, cppcheck, ASan/UBSan, Valgrind, Groq API (LLM, Week 3).
 - Every analyzer returns `{"score": 0..1, "evidence": {...}, "feedback": "one line"}`.
 - Registry in `analyzers/__init__.py` maps analyzer name (from rules JSON) to a function.
 - First pass: compile, smoke run on the sample input, regex checks for main/scanf/printf/return.
@@ -27,7 +27,7 @@ Hard requirements from the brief:
 - Edge cases: generate tricky + seeded random inputs, run student code and a reference solution,
   and report any mismatch with input, expected, got and a reason.
 - Complexity: time growing input sizes, take the median of 5 runs, map the growth to a class (O(1), O(n), ...).
-- Readability: Ollama at temperature 0 with a fixed seed. Cache answers by hash(code + prompt + model).
+- Readability: LLM on Groq at temperature 0 with a fixed seed. Cache answers by hash(code + prompt + model).
 - Originality: strip comments, replace names with ID and numbers with NUM, compare 5-token
   k-gram sets against a corpus folder (submissions/, ai/, web/). Flag at or above 0.85; never auto-zero.
   Implemented in `analyzers/similarity_flag.py` (was the `originality.py` prototype).
@@ -144,17 +144,8 @@ Week 3 in progress (2026-10-23). Repo moved to github.com/wnubhav/Autograder_Pro
 Grades now (max possible 80): add 65.0, add_crash 28.5, add_good 80.0, add_infinite 25.0,
 add_leak 68.5, add_loop 55.5, add_messy 64.5, add_syntax_error 13.0. Two runs identical.
 
-- `analyzers/llm_review.py` (readability with Ollama, qwen2.5-coder:1.5b, temperature 0, seed 42,
-  answers cached in cache/llm/<sha256 of code+prompt+model+temperature+seed>.json; stops the
-  whole run with a clear message if Ollama is not running). Written and tested against a fake
-  server only: the Ollama download was too slow. It stays registered but rules/add.json does
-  not use it. To switch back, set the readability metric's analyzer to "llm_review" with
-  params { "model": "qwen2.5-coder:1.5b", "temperature": 0, "seed": 42 }.
-- `analyzers/readability_rules.py` (readability, no AI, used now): average of three parts,
-  each 0..1 with a short reason: comments (commented lines / non-empty lines, compared with
-  min_comment_ratio 0.1), names (share of basic-type variable and parameter names with at
-  least min_name_length 2 characters; i, j, k allowed), lines (share of lines at most
-  max_line_length 80). Names are found with regexes, not a parser.
+- Readability was first a rule-based analyzer (`readability_rules.py`, comments/names/line
+  length) while Ollama was too slow to download. Both were replaced by the Groq version below.
 
 - `analyzers/similarity_flag.py` (originality, moved from `originality.py`): normalized 5-token
   k-grams against every *.c in corpus_dir (submission itself skipped). Score is always 1.0;
@@ -174,14 +165,32 @@ Grades now (all 9 metrics, out of 100): add 78.33, add_copy 100.0 (flagged), add
 add_good 100.0 (flagged), add_infinite 41.67, add_leak 88.5, add_loop 70.28, add_messy 81.35,
 add_syntax_error 26.33. Two runs identical (grades, scores, flags).
 
+Readability switched to Groq (2026-10-23):
+- `analyzers/llm_review.py` calls Groq's OpenAI-compatible API
+  (https://api.groq.com/openai/v1/chat/completions) with temperature 0, seed 42 and
+  `response_format: json_object`, and asks for {"score": 0-10, "reasons": [...]}; score = value / 10.
+  The key comes only from the GROQ_API_KEY environment variable, never from a file in the repo.
+  Sends a custom User-Agent (Groq's firewall blocks Python's default one).
+- Model: `openai/gpt-oss-120b`. The brief's `llama-3.3-70b-versatile` is no longer served by
+  Groq (404 model_not_found), so we picked the largest general model Groq still offers.
+- Cache unchanged: cache/llm/<sha256 of code+prompt+model+temperature+seed>.json. cache/llm/ is
+  committed, so reruns and anyone without a key get the same readability scores for the samples.
+  A new or edited submission needs the key (no key and no cached answer stops the run with a message).
+- The model sometimes packs all reasons into one string joined by '","'; the feedback line splits it.
+- `readability_rules.py` removed.
+
+Grades now (out of 100): add 81.0, add_copy 97.0 (flagged), add_crash 43.5, add_good 99.0
+(flagged), add_infinite 40.0, add_leak 86.5, add_loop 73.5, add_messy 77.5, add_syntax_error 26.0.
+Two runs identical (grades, scores, flags); the second run had GROQ_API_KEY unset and used only the cache.
+
 Week 3 is done. Next is Week 4: sample_outputs/, usefulness/limitations, README, video, report.
 
 ## Notes
 - The brief has two slips: the sample input "75" should be "7 5", and the example report lists
   the expected output of `2147483647 1` as `-2147483648` (the overflowed value). The true sum is
   2147483648. Decide which one the tests treat as correct, and document the choice.
-- The brief's rules use the Groq model name `llama-3.3-70b-versatile`. With Ollama, change the
-  model in the rules JSON (e.g. `llama3.1`). That's fine, since the rules are editable.
+- The brief's rules use the Groq model `llama-3.3-70b-versatile`, which Groq has retired. We use
+  `openai/gpt-oss-120b`; the model is a rules setting, so this needs no code change. Say so in the report.
 
 ## How to work with me
 - Go one step at a time and explain each piece in simple language. My friend has to understand

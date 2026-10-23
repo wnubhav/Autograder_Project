@@ -50,9 +50,9 @@
     },
     {
       "name": "readability",
-      "analyzer": "readability_rules",
+      "analyzer": "llm_review",
       "weight": 0.10,
-      "params": { "min_comment_ratio": 0.1, "min_name_length": 2, "max_line_length": 80 }
+      "params": { "model": "openai/gpt-oss-120b", "temperature": 0, "seed": 42 }
     },
     {
       "name": "originality",

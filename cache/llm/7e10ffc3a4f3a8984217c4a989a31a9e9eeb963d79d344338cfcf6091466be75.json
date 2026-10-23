@@ -1,0 +1,1 @@
+{"score":5,"reasons":["Generic variable names (a, b)","Lack of inline comments explaining the loop","Infinite loop logic is not obvious from the code"]}

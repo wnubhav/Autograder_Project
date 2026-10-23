@@ -1,0 +1,1 @@
+{"score":3,"reasons":["Unclear variable names (a, b, sum)","Unused variable and redundant branches make the main function overly long","Lacks modular structure and helpful comments"]}
