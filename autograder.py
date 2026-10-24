@@ -65,6 +65,8 @@ def grade_submission(source_path, rules, versions):
     for metric in rules["metrics"]:
         result = run_metric(metric, source_path, first_pass, rules)
         result["weight"] = metric["weight"]
+        if "advice" in metric:
+            result["advice"] = metric["advice"]
         metrics[metric["name"]] = result
         grade += metric["weight"] * result["score"]
         if "flag" in result:

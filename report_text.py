@@ -4,7 +4,7 @@ Sections:
   1. score table (weight, score, contribution and feedback for each metric)
   2. flags for the teacher (suspected copying)
   3. "Where you failed": failing tests and edge cases with input, expected, got, why
-  4. "Suggestions to raise the grade": the feedback of every metric below full marks
+  4. "Suggestions to raise the grade": the rules' advice line of every metric below full marks
   5. a short usefulness and limitations section (the same for every submission)
 """
 import os
@@ -142,7 +142,9 @@ def full_report(report):
     lines += where_you_failed(metrics)
 
     lines += ["", "--- Suggestions to raise the grade ---"]
-    suggestions = [f"- {name}: {r['feedback']}" for name, r in metrics.items() if r["score"] < 1]
+    # The advice line comes from the rules file; without one, repeat the feedback.
+    suggestions = [f"- {name}: {r.get('advice', r['feedback'])}"
+                   for name, r in metrics.items() if r["score"] < 1]
     lines += suggestions or ["- None: full marks on every metric."]
 
     lines += ["", "--- Usefulness & limitations of this evaluation ---"]

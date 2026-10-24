@@ -8,30 +8,35 @@
       "name": "correctness",
       "analyzer": "io_tests",
       "weight": 0.20,
+      "advice": "Run your program on the failing inputs above, including very large and very small numbers.",
       "params": { "testset_dir": "tests/add/" }
     },
     {
       "name": "syntax",
       "analyzer": "compiler_warnings",
       "weight": 0.10,
+      "advice": "Fix every compiler warning; compile with -Wall -Wextra to see them.",
       "params": { "flags": "-Wall -Wextra -Werror -std=c11" }
     },
     {
       "name": "structure",
       "analyzer": "static_analysis",
       "weight": 0.10,
+      "advice": "Keep each function short and simple, and fix what cppcheck reports.",
       "params": { "max_cyclomatic": 8, "max_function_length": 40 }
     },
     {
       "name": "modularity",
       "analyzer": "function_split",
       "weight": 0.10,
+      "advice": "Move the real work into a helper function, for example int add(int a, int b), and call it from main.",
       "params": { "expect_helpers": true, "min_functions": 2 }
     },
     {
       "name": "logical",
       "analyzer": "edge_case_runner",
       "weight": 0.10,
+      "advice": "Test negatives, zero and sums beyond the int range; use long long (and %lld) for the sum.",
       "params": { "cases": ["negatives", "zero", "int_overflow"],
                   "reference": "reference/add.c", "random_per_case": 3, "seed": 42 }
     },
@@ -39,6 +44,7 @@
       "name": "complexity",
       "analyzer": "complexity_estimator",
       "weight": 0.10,
+      "advice": "Compute the sum directly with a + b instead of a loop that grows with the numbers.",
       "params": { "required": "O(1)", "sizes": [1000000, 10000000, 100000000],
                   "input": "{n} {n}" }
     },
@@ -46,18 +52,21 @@
       "name": "memory_safety",
       "analyzer": "sanitizer_run",
       "weight": 0.10,
+      "advice": "Free what you allocate, never use a null or freed pointer, and avoid signed overflow.",
       "params": { "flags": "-fsanitize=address,undefined", "inputs_dir": "tests/add/" }
     },
     {
       "name": "readability",
       "analyzer": "llm_review",
       "weight": 0.10,
+      "advice": "Use clear names, consistent indentation and a short comment above each function.",
       "params": { "model": "openai/gpt-oss-120b", "temperature": 0, "seed": 42 }
     },
     {
       "name": "originality",
       "analyzer": "similarity_flag",
       "weight": 0.10,
+      "advice": "Write the solution yourself and be ready to explain every line.",
       "params": { "corpus_dir": "submissions/", "flag_threshold": 0.85 }
     }
   ]

@@ -198,6 +198,11 @@ Week 4 in progress (2026-10-24):
   At most 3 failures per metric are shown. The terminal still prints the short `summary_text`.
   The fixed usefulness/limitations examples (`USEFULNESS_LIMITATIONS`) also go into the JSON.
 
+- Each metric in `rules/add.json` has an `"advice"` line; the coordinator copies it into the
+  result and the Suggestions section shows it for metrics below 1 (falls back to the feedback).
+  The rules SHA-256 changed; grades did not.
+- `sample_outputs/`: final .json and .txt for all 9 samples (two runs identical, second without key).
+- `README.md`: what it does, WSL/apt/pip/GROQ_API_KEY install, run command, folders, sample grades.
 ## Notes
 - The brief has two slips: the sample input "75" should be "7 5", and the example report lists
   the expected output of `2147483647 1` as `-2147483648` (the overflowed value). The true sum is
