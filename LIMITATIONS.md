@@ -125,6 +125,16 @@ would be flagged against every other. This is why a flag never lowers the
 score and a teacher has to look at it. For short problems the threshold
 should be higher, or the check should be switched off.
 
+The same happens against LLM answers. We asked Groq's `qwen/qwen3.8-27b`
+for a program that adds two integers and put its answer in
+`submissions/corpus/ai/`. The brief's `add.c` matches it with similarity
+1.00, because after spacing is ignored the two programs are the same. So
+the agent cannot tell "copied from an LLM" from "wrote the obvious thing".
+`add_loop.c` is also flagged (0.85) against `gpt_oss_120b.c`, although it
+adds by counting and the LLM answer does not. The similarity is the share
+of the smaller file found in the bigger one, and the LLM's whole program is
+almost the same as `add_loop.c`'s `main()`.
+
 ## Originality: a flag does not cost any points
 
 Because a flag never changes the score, the originality metric always gives

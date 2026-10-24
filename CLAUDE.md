@@ -199,3 +199,9 @@ Week 3 is done. Next is Week 4: sample_outputs/, usefulness/limitations, README,
   and defend the code in the weekly evaluations, and the brief penalises blindly used AI output.
 - Keep the code simple and readable. Avoid frameworks and unnecessary abstractions.
 - In anything written for the report: plain human language, no em dashes.
+
+Week 4 in progress (2026-10-24):
+- Originality corpus in `submissions/corpus/` (ai/: gpt-oss-120b and qwen3.8-27b answers from Groq,
+  plus one by Claude Opus 5.5; web/: GeeksforGeeks and Programiz). Found through the existing
+  `submissions/` corpus_dir (recursive glob), never graded (`submissions/*.c` skips sub-folders).
+  New flags: add.c (1.00 vs qwen), add_loop.c (0.85 vs gpt-oss). Grades unchanged.
