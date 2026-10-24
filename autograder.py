@@ -22,6 +22,7 @@ import lizard
 
 from analyzers import NEEDS_BINARY, REGISTRY
 from first_pass import run_first_pass
+from report_text import USEFULNESS_LIMITATIONS, first_pass_status, full_report
 from rules import load_rules
 
 
@@ -77,21 +78,14 @@ def grade_submission(source_path, rules, versions):
         "first_pass": first_pass,
         "metrics": metrics,
         "flags": flags,
+        "usefulness_limitations": USEFULNESS_LIMITATIONS,
     }
 
 
 def summary_text(report):
-    """The short summary that is printed and also saved as reports/<name>.txt."""
-    fp = report["first_pass"]
-    if not fp["compiled"]:
-        status = "does not compile"
-    else:
-        status = f"compiled, smoke run {fp['smoke']['status']}"
-        if fp["suspected_infinite_loop"]:
-            status += " (suspected infinite loop: only source-based analyzers run)"
-
+    """The short summary printed while grading (the full report goes to reports/<name>.txt)."""
     lines = [f"== {os.path.basename(report['submission'])}",
-             f"   first pass: {status}"]
+             f"   first pass: {first_pass_status(report['first_pass'])}"]
     missing = 0
     for name, result in report["metrics"].items():
         if result.get("implemented") is False:
@@ -129,7 +123,7 @@ def main():
             json.dump(report, f, indent=2)
         text_path = os.path.join("reports", name + ".txt")
         with open(text_path, "w") as f:
-            f.write(text)
+            f.write(full_report(report))
         print(f"   reports: {json_path}, {text_path}\n")
 
 

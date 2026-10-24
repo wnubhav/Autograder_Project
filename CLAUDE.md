@@ -187,6 +187,17 @@ Two runs identical (grades, scores, flags); the second run had GROQ_API_KEY unse
 
 Week 3 is done. Next is Week 4: sample_outputs/, usefulness/limitations, README, video, report.
 
+Week 4 in progress (2026-10-24):
+- Originality corpus in `submissions/corpus/` (ai/: gpt-oss-120b and qwen3.8-27b answers from Groq,
+  plus one by Claude Opus 5.5; web/: GeeksforGeeks and Programiz). Found through the existing
+  `submissions/` corpus_dir (recursive glob), never graded (`submissions/*.c` skips sub-folders).
+  New flags: add.c (1.00 vs qwen), add_loop.c (0.85 vs gpt-oss). Grades unchanged.
+- `report_text.py`: `full_report(report)` writes reports/<name>.txt in the brief's page 7 layout
+  (score table, flags, Where you failed, Suggestions, Usefulness & limitations). Failing tests
+  borrow the edge-case reason for the same input, otherwise the reason comes from the run status.
+  At most 3 failures per metric are shown. The terminal still prints the short `summary_text`.
+  The fixed usefulness/limitations examples (`USEFULNESS_LIMITATIONS`) also go into the JSON.
+
 ## Notes
 - The brief has two slips: the sample input "75" should be "7 5", and the example report lists
   the expected output of `2147483647 1` as `-2147483648` (the overflowed value). The true sum is
@@ -199,9 +210,3 @@ Week 3 is done. Next is Week 4: sample_outputs/, usefulness/limitations, README,
   and defend the code in the weekly evaluations, and the brief penalises blindly used AI output.
 - Keep the code simple and readable. Avoid frameworks and unnecessary abstractions.
 - In anything written for the report: plain human language, no em dashes.
-
-Week 4 in progress (2026-10-24):
-- Originality corpus in `submissions/corpus/` (ai/: gpt-oss-120b and qwen3.8-27b answers from Groq,
-  plus one by Claude Opus 5.5; web/: GeeksforGeeks and Programiz). Found through the existing
-  `submissions/` corpus_dir (recursive glob), never graded (`submissions/*.c` skips sub-folders).
-  New flags: add.c (1.00 vs qwen), add_loop.c (0.85 vs gpt-oss). Grades unchanged.
