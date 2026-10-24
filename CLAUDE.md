@@ -1,7 +1,7 @@
-# AutoGrader project (context carried over from a claude.ai chat)
+# AutoGrader project
 
 ## What this is
-A friend's assignment: build "AutoGrader", an agent that grades student C programs from an
+Assignment: build "AutoGrader", an agent that grades student C programs from an
 instructor-written rules file. The full brief is in `Agentic-AI-assignment.pdf` (keep it in
 this folder). The plan report already submitted is `agentic01.pdf`.
 
@@ -14,7 +14,7 @@ Hard requirements from the brief:
 - Reproducible: same submission + same rules gives the same grade.
 - Final report needs a "Usefulness and Limitations" section with 3-4 concrete examples each.
 
-## Design already agreed (keep it simple, no unnecessary complexity)
+## Design (keep it simple, no unnecessary complexity)
 - Python 3 on Linux/WSL. Tools: gcc, lizard, cppcheck, ASan/UBSan, Valgrind, Groq API (LLM, Week 3).
 - Every analyzer returns `{"score": 0..1, "evidence": {...}, "feedback": "one line"}`.
 - Registry in `analyzers/__init__.py` maps analyzer name (from rules JSON) to a function.
@@ -36,7 +36,7 @@ Hard requirements from the brief:
   for all samples to a committed `sample_outputs/` folder, since the brief requires them.
 - Reproducibility check: run the grader twice and compare the grade and every metric score.
   Never compare timings (`time_s` in sandbox results changes from run to run).
-- `compiler_warnings` scoring: 0 on a real error, otherwise 1 - 0.25 per warning (agreed).
+- `compiler_warnings` scoring: 0 on a real error, otherwise 1 - 0.25 per warning.
   The penalty can be overridden with `"penalty_per_warning"` in the metric's params.
 
 ## Planned folder layout
@@ -189,7 +189,7 @@ Week 3 is done. Next is Week 4: sample_outputs/, usefulness/limitations, README,
 
 Week 4 in progress (2026-10-24):
 - Originality corpus in `submissions/corpus/` (ai/: gpt-oss-120b and qwen3.8-27b answers from Groq,
-  plus one by Claude Opus 5.5; web/: GeeksforGeeks and Programiz). Found through the existing
+  plus a third LLM answer; web/: GeeksforGeeks and Programiz). Found through the existing
   `submissions/` corpus_dir (recursive glob), never graded (`submissions/*.c` skips sub-folders).
   New flags: add.c (1.00 vs qwen), add_loop.c (0.85 vs gpt-oss). Grades unchanged.
 - `report_text.py`: `full_report(report)` writes reports/<name>.txt in the brief's page 7 layout
@@ -210,8 +210,8 @@ Week 4 in progress (2026-10-24):
 - The brief's rules use the Groq model `llama-3.3-70b-versatile`, which Groq has retired. We use
   `openai/gpt-oss-120b`; the model is a rules setting, so this needs no code change. Say so in the report.
 
-## How to work with me
-- Go one step at a time and explain each piece in simple language. My friend has to understand
-  and defend the code in the weekly evaluations, and the brief penalises blindly used AI output.
+## Working style
+- Go one step at a time, and keep each piece simple enough to explain and defend in the
+  weekly evaluations.
 - Keep the code simple and readable. Avoid frameworks and unnecessary abstractions.
 - In anything written for the report: plain human language, no em dashes.
