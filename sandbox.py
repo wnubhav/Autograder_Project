@@ -15,7 +15,7 @@ How the limits work:
   - Core dumps are switched off (RLIMIT_CORE = 0).
 
 Try it by hand:
-    python3 sandbox.py submissions/add_crash.c tests/add/01.in
+    python3 sandbox.py submissions/add/add_crash.c tests/add/01.in
 """
 
 import math

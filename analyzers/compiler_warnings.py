@@ -23,9 +23,9 @@ def analyze(source_path, first_pass, params, rules):
     flags = shlex.split(params["flags"])
     penalty = params.get("penalty_per_warning", 0.25)
 
-    os.makedirs("build", exist_ok=True)
+    os.makedirs(rules["build_dir"], exist_ok=True)
     name = os.path.splitext(os.path.basename(source_path))[0]
-    obj = os.path.join("build", name + ".syntax.o")
+    obj = os.path.join(rules["build_dir"], name + ".syntax.o")
     result = subprocess.run(["gcc", *flags, "-c", source_path, "-o", obj],
                             capture_output=True, text=True, timeout=COMPILE_TIMEOUT_S)
 

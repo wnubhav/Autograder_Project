@@ -11,7 +11,7 @@ logical             10     0/10           0.0  not run: suspected infinite loop 
 complexity          10     0/10           0.0  not run: suspected infinite loop (smoke run timed out)
 memory_safety       10     0/10           0.0  not run: suspected infinite loop (smoke run timed out)
 readability         10     5/10           5.0  5/10 from openai/gpt-oss-120b: Generic variable names (a, b); Lack of inline comments explaining the loop; Infinite loop logic is not obvious from the code
-originality         10    10/10          10.0  max similarity 0.70 with submissions/add_syntax_error.c (not flagged)
+originality         10    10/10          10.0  max similarity 0.70 with submissions/add/add_syntax_error.c (not flagged)
 
 --- Where you failed ---
 The tests could not be run: suspected infinite loop (smoke run timed out).

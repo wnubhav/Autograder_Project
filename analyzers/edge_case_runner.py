@@ -92,8 +92,9 @@ def make_inputs(params):
 
 
 def analyze(source_path, first_pass, params, rules):
-    # Own folder, so reference/add.c does not overwrite the student's build/add.
-    reference, errors = compile_plain(params["reference"], build_dir="build/reference")
+    # Own folder, so reference/add.c does not overwrite the student's build/add/add.
+    reference, errors = compile_plain(params["reference"],
+                                      os.path.join(rules["build_dir"], "reference"))
     if reference is None:
         raise RuntimeError(f"reference solution does not compile: {errors.strip()[:300]}")
 

@@ -210,6 +210,14 @@ Week 4 in progress (2026-10-24):
   plus optional `"reasons"` instead of `"cases"`; `complexity_estimator` takes
   `"input_kind": "array_not_found"` instead of `"input"`. Search originality uses
   corpus_dir `submissions/search/`. Add grades, scores, flags and text reports unchanged.
+- One folder per problem (2026-10-25): add samples in `submissions/add/` (corpus in
+  `submissions/add/corpus/`, add corpus_dir is now `submissions/add/`), outputs in
+  `sample_outputs/add/`. `load_rules` sets `rules["name"]` (file name without .json) and
+  `rules["build_dir"]` = build/<name>/; reports go to reports/<name>/. The usefulness and
+  limitations examples moved from report_text.py into each rules file
+  (`"usefulness_limitations"`); the search ones use real search results.
+  All grades, scores and flags unchanged for both problems (flag text has the new paths).
+
 ## Notes
 - The brief has two slips: the sample input "75" should be "7 5", and the example report lists
   the expected output of `2147483647 1` as `-2147483648` (the overflowed value). The true sum is

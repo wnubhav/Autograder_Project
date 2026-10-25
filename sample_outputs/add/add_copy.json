@@ -1,7 +1,7 @@
 {
-  "submission": "submissions/add.c",
-  "grade": 81.0,
-  "rules_sha256": "7edd460611d11b8401e2fc285ead6b71b9ac3c59a4b9e2a1d66a2e9d483d1641",
+  "submission": "submissions/add/add_copy.c",
+  "grade": 97.0,
+  "rules_sha256": "b993f21f617bb6825b4523d28fd8f9f4c7c583d108c0b6a9484c701f83810654",
   "tool_versions": {
     "python": "3.14.4",
     "gcc": "gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0",
@@ -9,7 +9,7 @@
     "lizard": "1.24.2"
   },
   "first_pass": {
-    "source": "submissions/add.c",
+    "source": "submissions/add/add_copy.c",
     "checks": {
       "has_main": true,
       "uses_scanf": true,
@@ -18,42 +18,27 @@
     },
     "compiled": true,
     "compiler_output": "",
-    "binary": "build/add",
+    "binary": "build/add/add_copy",
     "smoke": {
       "status": "ok",
       "returncode": 0,
       "signal": null,
       "stdout": "12\n",
       "stderr": "",
-      "time_s": 0.005
+      "time_s": 0.004
     },
     "suspected_infinite_loop": false,
     "can_run": true
   },
   "metrics": {
     "correctness": {
-      "score": 0.8,
+      "score": 1.0,
       "evidence": {
-        "passed": 8,
+        "passed": 10,
         "total": 10,
-        "failures": [
-          {
-            "test": "07",
-            "input": "2147483647 1",
-            "expected": "2147483648",
-            "got": "-2147483648",
-            "status": "ok"
-          },
-          {
-            "test": "08",
-            "input": "-2147483648 -1",
-            "expected": "-2147483649",
-            "got": "2147483647",
-            "status": "ok"
-          }
-        ]
+        "failures": []
       },
-      "feedback": "8 of 10 tests pass; first failure 07: input '2147483647 1', expected '2147483648', got '-2147483648' (ok)",
+      "feedback": "10 of 10 tests pass",
       "weight": 0.2,
       "advice": "Run your program on the failing inputs above, including very large and very small numbers."
     },
@@ -73,10 +58,16 @@
       "evidence": {
         "functions": [
           {
-            "name": "main",
-            "line": 2,
+            "name": "plus",
+            "line": 5,
             "cyclomatic": 1,
-            "length": 6
+            "length": 4
+          },
+          {
+            "name": "main",
+            "line": 10,
+            "cyclomatic": 2,
+            "length": 9
           }
         ],
         "cppcheck": [],
@@ -87,90 +78,36 @@
       "advice": "Keep each function short and simple, and fix what cppcheck reports."
     },
     "modularity": {
-      "score": 0.5,
+      "score": 1.0,
       "evidence": {
         "functions_defined": [
+          "plus",
           "main"
         ],
-        "helpers_used": [],
+        "helpers_used": [
+          "plus"
+        ],
         "helpers_unused": [],
-        "counted": 1,
+        "counted": 2,
         "expected_min": 2
       },
-      "feedback": "only main() is defined; move a piece of the work into a helper function and call it from main",
+      "feedback": "work is split into 2 functions: plus, main",
       "weight": 0.1,
       "advice": "Move the real work into a helper function, for example int add(int a, int b), and call it from main."
     },
     "logical": {
-      "score": 0.65,
+      "score": 1.0,
       "evidence": {
-        "passed": 13,
+        "passed": 20,
         "total": 20,
         "cases": [
           "negatives",
           "zero",
           "int_overflow"
         ],
-        "failures": [
-          {
-            "case": "int_overflow",
-            "input": "2147483647 1",
-            "expected": "2147483648",
-            "got": "-2147483648",
-            "status": "ok",
-            "reason": "sum goes beyond int range; use long long (and %lld) for the numbers and the sum"
-          },
-          {
-            "case": "int_overflow",
-            "input": "-2147483648 -1",
-            "expected": "-2147483649",
-            "got": "2147483647",
-            "status": "ok",
-            "reason": "sum goes beyond int range; use long long (and %lld) for the numbers and the sum"
-          },
-          {
-            "case": "int_overflow",
-            "input": "2147483647 2147483647",
-            "expected": "4294967294",
-            "got": "-2",
-            "status": "ok",
-            "reason": "sum goes beyond int range; use long long (and %lld) for the numbers and the sum"
-          },
-          {
-            "case": "int_overflow",
-            "input": "-2147483648 -2147483648",
-            "expected": "-4294967296",
-            "got": "0",
-            "status": "ok",
-            "reason": "sum goes beyond int range; use long long (and %lld) for the numbers and the sum"
-          },
-          {
-            "case": "int_overflow",
-            "input": "2147482751 1589",
-            "expected": "2147484340",
-            "got": "-2147482956",
-            "status": "ok",
-            "reason": "sum goes beyond int range; use long long (and %lld) for the numbers and the sum"
-          },
-          {
-            "case": "int_overflow",
-            "input": "-2147482890 -845",
-            "expected": "-2147483735",
-            "got": "2147483561",
-            "status": "ok",
-            "reason": "sum goes beyond int range; use long long (and %lld) for the numbers and the sum"
-          },
-          {
-            "case": "int_overflow",
-            "input": "2147483205 532",
-            "expected": "2147483737",
-            "got": "-2147483559",
-            "status": "ok",
-            "reason": "sum goes beyond int range; use long long (and %lld) for the numbers and the sum"
-          }
-        ]
+        "failures": []
       },
-      "feedback": "13 of 20 edge cases match the reference; int_overflow: input '2147483647 1', expected '2147483648', got '-2147483648' (ok): sum goes beyond int range; use long long (and %lld) for the numbers and the sum",
+      "feedback": "20 of 20 edge cases match the reference",
       "weight": 0.1,
       "advice": "Test negatives, zero and sums beyond the int range; use long long (and %lld) for the sum."
     },
@@ -183,7 +120,7 @@
         "timings": [
           {
             "n": 1000000,
-            "median_s": 0.005
+            "median_s": 0.004
           },
           {
             "n": 10000000,
@@ -191,7 +128,7 @@
           },
           {
             "n": 100000000,
-            "median_s": 0.005
+            "median_s": 0.004
           }
         ]
       },
@@ -200,34 +137,27 @@
       "advice": "Compute the sum directly with a + b instead of a loop that grows with the numbers."
     },
     "memory_safety": {
-      "score": 0.75,
+      "score": 1.0,
       "evidence": {
         "flags": "-fsanitize=address,undefined",
         "inputs_run": 10,
-        "problems": [
-          {
-            "kind": "undefined behaviour",
-            "where": "add.c:5",
-            "message": "signed integer overflow: 2147483647 + 1 cannot be represented in type 'int'",
-            "input": "2147483647 1"
-          }
-        ],
+        "problems": [],
         "timeouts": []
       },
-      "feedback": "1 problem(s); first: undefined behaviour at add.c:5 (signed integer overflow: 2147483647 + 1 cannot be represented in type 'int') on input '2147483647 1'",
+      "feedback": "ASan/UBSan clean on 10 input(s)",
       "weight": 0.1,
       "advice": "Free what you allocate, never use a null or freed pointer, and avoid signed overflow."
     },
     "readability": {
-      "score": 0.6,
+      "score": 0.7,
       "evidence": {
         "model": "openai/gpt-oss-120b",
         "temperature": 0,
         "seed": 42,
-        "raw_response": "{\"score\":6,\"reasons\":[\"Inconsistent indentation\",\"Missing comments\",\"Variable names are minimal\"]}",
-        "cache_file": "cache/llm/5253dd1d7d7b6246687eccfbd40ca5780c0e6b380575c3632b89adbafc078002.json"
+        "raw_response": "{\"score\":7,\"reasons\":[\"Descriptive variable names but generic function name\\\",\\\"Comment unrelated to functionality\\\",\\\"Consistent indentation and spacing\"]}",
+        "cache_file": "cache/llm/1413b7ffeb04b09b250bb56f72f68121a7854069be58c92e0c2b12366c1fc16a.json"
       },
-      "feedback": "6/10 from openai/gpt-oss-120b: Inconsistent indentation; Missing comments; Variable names are minimal",
+      "feedback": "7/10 from openai/gpt-oss-120b: Descriptive variable names but generic function name; Comment unrelated to functionality; Consistent indentation and spacing",
       "weight": 0.1,
       "advice": "Use clear names, consistent indentation and a short comment above each function."
     },
@@ -235,17 +165,17 @@
       "score": 1.0,
       "evidence": {
         "max_similarity": 1.0,
-        "closest_file": "submissions/corpus/ai/qwen3_8_27b.c",
+        "closest_file": "submissions/add/add_good.c",
         "flag_threshold": 0.85
       },
-      "feedback": "max similarity 1.00 with submissions/corpus/ai/qwen3_8_27b.c: flagged for the teacher",
-      "flag": "suspected copying: similarity 1.00 with submissions/corpus/ai/qwen3_8_27b.c (threshold 0.85); please check by hand",
+      "feedback": "max similarity 1.00 with submissions/add/add_good.c: flagged for the teacher",
+      "flag": "suspected copying: similarity 1.00 with submissions/add/add_good.c (threshold 0.85); please check by hand",
       "weight": 0.1,
       "advice": "Write the solution yourself and be ready to explain every line."
     }
   },
   "flags": [
-    "originality: suspected copying: similarity 1.00 with submissions/corpus/ai/qwen3_8_27b.c (threshold 0.85); please check by hand"
+    "originality: suspected copying: similarity 1.00 with submissions/add/add_good.c (threshold 0.85); please check by hand"
   ],
   "usefulness_limitations": {
     "usefulness": [

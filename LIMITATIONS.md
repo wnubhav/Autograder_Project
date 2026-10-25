@@ -74,7 +74,7 @@ do with code quality.
 ## A syntax error also lowers the structure score
 
 When the code does not compile, cppcheck can get confused too. On
-`submissions/add_syntax_error.c`, the missing `;` after `scanf(...)` makes
+`submissions/add/add_syntax_error.c`, the missing `;` after `scanf(...)` makes
 cppcheck report "There is an unknown macro here somewhere" (`unknownMacro`).
 That counts as one structure problem, so the student loses 0.2 in structure
 for the same mistake that already gives 0 in syntax. The structure verdict
@@ -94,7 +94,7 @@ lines that make the evidence hard to read.
 ## Complexity: process start-up hides small growth
 
 Every timed run includes about 4 ms just to start the program. For
-`submissions/add_loop.c`, which adds by counting one step at a time (O(n)),
+`submissions/add/add_loop.c`, which adds by counting one step at a time (O(n)),
 the time goes from 0.008 s at n = 1,000,000 to 0.219 s at n = 100,000,000.
 A true O(n) curve would give a growth of 1, but we measure about 0.73,
 because the start-up time makes the small size look slower than it is.
@@ -130,7 +130,7 @@ should be higher, or the check should be switched off.
 
 The same happens against LLM answers. We asked Groq's `qwen/qwen3.8-27b`
 for a program that adds two integers and put its answer in
-`submissions/corpus/ai/`. The brief's `add.c` matches it with similarity
+`submissions/add/corpus/ai/`. The brief's `add.c` matches it with similarity
 1.00, because after spacing is ignored the two programs are the same. So
 the agent cannot tell "copied from an LLM" from "wrote the obvious thing".
 `add_loop.c` is also flagged (0.85) against `gpt_oss_120b.c`, although it
@@ -141,7 +141,7 @@ almost the same as `add_loop.c`'s `main()`.
 ## Originality: a flag does not cost any points
 
 Because a flag never changes the score, the originality metric always gives
-1.0. `submissions/add_copy.c` is `add_good.c` with every name changed; the
+1.0. `submissions/add/add_copy.c` is `add_good.c` with every name changed; the
 agent finds it (similarity 1.00) but still gives it 100 / 100. The grade
 alone does not show the problem; only the flag in the report does, so a
 teacher who reads only the grade misses it.
@@ -149,8 +149,8 @@ teacher who reads only the grade misses it.
 ## Readability: the model also punishes a syntax error
 
 The prompt tells the model to judge only readability, not correctness, but
-it does not always follow that. `submissions/add_syntax_error.c` is neatly
-indented and spaced, more so than `submissions/add.c`, and differs from a
+it does not always follow that. `submissions/add/add_syntax_error.c` is neatly
+indented and spaced, more so than `submissions/add/add.c`, and differs from a
 correct program only by one missing `;`. The model gave it 3/10 and listed
 "Missing semicolon after scanf reduces readability" as a reason, while the
 more cramped `add.c` got 6/10. The same mistake is already counted by the

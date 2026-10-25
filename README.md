@@ -12,7 +12,9 @@ program printed and why. Suspected copies (from other students, websites or LLMs
 flagged for the teacher but never lower the grade. The same submission and the same
 rules always give the same grade.
 
-The metrics, weights, limits and parameters all live in a rules file, not in the code.
+The metrics, weights, limits and parameters all live in a rules file, not in the code,
+along with an advice line per metric and the usefulness and limitations examples shown
+at the end of each report.
 Two problems are included, to show the same grader works for more than one task:
 
 - `rules/add.json`: add two integers (the problem from the brief)
@@ -63,14 +65,15 @@ Two problems are included, to show the same grader works for more than one task:
 
 ## Run
 
-    python3 autograder.py rules/add.json submissions/*.c
+    python3 autograder.py rules/add.json submissions/add/*.c
     python3 autograder.py rules/search.json submissions/search/*.c
 
-You can also grade one file: `python3 autograder.py rules/add.json submissions/add.c`.
+You can also grade one file: `python3 autograder.py rules/add.json submissions/add/add.c`.
+Each problem has its own folders, named after the rules file (`add`, `search`).
 A short summary is printed for each submission, and two files are written:
 
-- `reports/<name>.json`: every score and its evidence, the rules file's SHA-256 hash and the tool versions
-- `reports/<name>.txt`: the report for the student (score table, where you failed,
+- `reports/<rules name>/<name>.json`: every score and its evidence, the rules file's SHA-256 hash and the tool versions
+- `reports/<rules name>/<name>.txt`: the report for the student (score table, where you failed,
   suggestions to raise the grade, usefulness and limitations)
 
 ## Folders
@@ -81,25 +84,25 @@ A short summary is printed for each submission, and two files are written:
 | `sandbox.py` | runs a program with CPU time, memory and output limits, and survives crashes and infinite loops |
 | `first_pass.py` | quick checks: main/scanf/printf/return, plain compile, smoke run on the sample input |
 | `rules.py` | loads and checks the rules file |
-| `report_text.py` | writes the student report in `reports/<name>.txt` |
+| `report_text.py` | writes the student report in `reports/<rules name>/<name>.txt` |
 | `analyzers/` | one file per analyzer; `__init__.py` maps analyzer names from the rules to functions |
 | `rules/` | the rules files (`add.json`, `search.json`) |
 | `tests/add/`, `tests/search/` | test inputs (`NN.in`) and expected outputs (`NN.out`); `tests/search/edge/` holds the search edge-case inputs |
 | `reference/` | the correct solutions that the edge-case analyzer compares against |
-| `submissions/` | sample add programs: correct, wrong, crashing, infinite loop, not compiling, leaking, slow, messy, copied |
+| `submissions/add/` | sample add programs: correct, wrong, crashing, infinite loop, not compiling, leaking, slow, messy, copied |
+| `submissions/add/corpus/` | LLM answers (`ai/`) and website solutions (`web/`) for add, used only for the originality check, never graded |
 | `submissions/search/` | sample search programs: correct, off by one, crashing on n = 0, sorting first |
-| `submissions/corpus/` | LLM answers (`ai/`) and website solutions (`web/`), used only for the originality check, never graded |
 | `cache/llm/` | saved LLM readability answers, so reruns give the same score |
-| `sample_outputs/` | the final `.json` and `.txt` reports for all sample submissions (search ones in `sample_outputs/search/`) |
-| `reports/` | reports from your latest run (not committed) |
-| `build/` | compiled programs (not committed) |
+| `sample_outputs/add/`, `sample_outputs/search/` | the final `.json` and `.txt` reports for all sample submissions |
+| `reports/<rules name>/` | reports from your latest run (not committed) |
+| `build/<rules name>/` | compiled programs (not committed) |
 | `LIMITATIONS.md` | concrete cases where the agent gives a wrong or unreliable verdict |
 
 ## Sample outputs
 
-`sample_outputs/` holds the reports for every program in `submissions/`.
+`sample_outputs/` holds the reports for every sample program, one folder per problem.
 
-Add two integers (`rules/add.json`):
+Add two integers (`rules/add.json`, reports in `sample_outputs/add/`):
 
 | Submission | Grade | Note |
 |---|---|---|

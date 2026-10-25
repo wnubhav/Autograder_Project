@@ -1,7 +1,7 @@
 {
-  "submission": "submissions/add_loop.c",
+  "submission": "submissions/add/add_loop.c",
   "grade": 73.5,
-  "rules_sha256": "7edd460611d11b8401e2fc285ead6b71b9ac3c59a4b9e2a1d66a2e9d483d1641",
+  "rules_sha256": "b993f21f617bb6825b4523d28fd8f9f4c7c583d108c0b6a9484c701f83810654",
   "tool_versions": {
     "python": "3.14.4",
     "gcc": "gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0",
@@ -9,7 +9,7 @@
     "lizard": "1.24.2"
   },
   "first_pass": {
-    "source": "submissions/add_loop.c",
+    "source": "submissions/add/add_loop.c",
     "checks": {
       "has_main": true,
       "uses_scanf": true,
@@ -18,14 +18,14 @@
     },
     "compiled": true,
     "compiler_output": "",
-    "binary": "build/add_loop",
+    "binary": "build/add/add_loop",
     "smoke": {
       "status": "ok",
       "returncode": 0,
       "signal": null,
       "stdout": "12\n",
       "stderr": "",
-      "time_s": 0.004
+      "time_s": 0.005
     },
     "suspected_infinite_loop": false,
     "can_run": true
@@ -195,11 +195,11 @@
       "evidence": {
         "required": "O(1)",
         "estimated": "O(n)",
-        "growth": 0.72,
+        "growth": 0.75,
         "timings": [
           {
             "n": 1000000,
-            "median_s": 0.008
+            "median_s": 0.007
           },
           {
             "n": 10000000,
@@ -207,11 +207,11 @@
           },
           {
             "n": 100000000,
-            "median_s": 0.219
+            "median_s": 0.218
           }
         ]
       },
-      "feedback": "estimated O(n), required O(1): time went from 0.008s at n=1000000 to 0.219s at n=100000000",
+      "feedback": "estimated O(n), required O(1): time went from 0.007s at n=1000000 to 0.218s at n=100000000",
       "weight": 0.1,
       "advice": "Compute the sum directly with a + b instead of a loop that grows with the numbers."
     },
@@ -259,17 +259,17 @@
       "score": 1.0,
       "evidence": {
         "max_similarity": 0.85,
-        "closest_file": "submissions/corpus/ai/gpt_oss_120b.c",
+        "closest_file": "submissions/add/corpus/ai/gpt_oss_120b.c",
         "flag_threshold": 0.85
       },
-      "feedback": "max similarity 0.85 with submissions/corpus/ai/gpt_oss_120b.c: flagged for the teacher",
-      "flag": "suspected copying: similarity 0.85 with submissions/corpus/ai/gpt_oss_120b.c (threshold 0.85); please check by hand",
+      "feedback": "max similarity 0.85 with submissions/add/corpus/ai/gpt_oss_120b.c: flagged for the teacher",
+      "flag": "suspected copying: similarity 0.85 with submissions/add/corpus/ai/gpt_oss_120b.c (threshold 0.85); please check by hand",
       "weight": 0.1,
       "advice": "Write the solution yourself and be ready to explain every line."
     }
   },
   "flags": [
-    "originality: suspected copying: similarity 0.85 with submissions/corpus/ai/gpt_oss_120b.c (threshold 0.85); please check by hand"
+    "originality: suspected copying: similarity 0.85 with submissions/add/corpus/ai/gpt_oss_120b.c (threshold 0.85); please check by hand"
   ],
   "usefulness_limitations": {
     "usefulness": [

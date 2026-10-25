@@ -1,25 +1,25 @@
-===== Grading report for add_messy.c =====
-Overall grade: 77.5 / 100
+===== Grading report for add_copy.c =====
+Overall grade: 97.0 / 100
 First pass: compiled, smoke run ok
 
 Metric          Weight    Score  Contribution  Feedback
 correctness         20    20/20          20.0  10 of 10 tests pass
-syntax              10   7.5/10           7.5  1 warning(s) with -Wall -Wextra -Werror -std=c11; first: submissions/add_messy.c:8:9: error: unused variable ‘unused’ [-Werror=unused-variable]
-structure           10     2/10           2.0  4 problem(s); first: main() has cyclomatic complexity 14 (limit 8)
-modularity          10     5/10           5.0  only main() is defined; move a piece of the work into a helper function and call it from main
+syntax              10    10/10          10.0  compiles cleanly with -Wall -Wextra -Werror -std=c11
+structure           10    10/10          10.0  all functions within limits (cyclomatic <= 8, length <= 40); cppcheck found nothing
+modularity          10    10/10          10.0  work is split into 2 functions: plus, main
 logical             10    10/10          10.0  20 of 20 edge cases match the reference
 complexity          10    10/10          10.0  O(1) confirmed (required O(1))
 memory_safety       10    10/10          10.0  ASan/UBSan clean on 10 input(s)
-readability         10     3/10           3.0  3/10 from openai/gpt-oss-120b: Unclear variable names (a, b, sum); Unused variable and redundant branches make the main function overly long; Lacks modular structure and helpful comments
-originality         10    10/10          10.0  max similarity 0.53 with submissions/add_infinite.c (not flagged)
+readability         10     7/10           7.0  7/10 from openai/gpt-oss-120b: Descriptive variable names but generic function name; Comment unrelated to functionality; Consistent indentation and spacing
+originality         10    10/10          10.0  max similarity 1.00 with submissions/add/add_good.c: flagged for the teacher
+
+--- Flags for the teacher (they do not change the grade) ---
+- originality: suspected copying: similarity 1.00 with submissions/add/add_good.c (threshold 0.85); please check by hand
 
 --- Where you failed ---
 Nothing: every test and edge case gave the expected answer.
 
 --- Suggestions to raise the grade ---
-- syntax: Fix every compiler warning; compile with -Wall -Wextra to see them.
-- structure: Keep each function short and simple, and fix what cppcheck reports.
-- modularity: Move the real work into a helper function, for example int add(int a, int b), and call it from main.
 - readability: Use clear names, consistent indentation and a short comment above each function.
 
 --- Usefulness & limitations of this evaluation ---

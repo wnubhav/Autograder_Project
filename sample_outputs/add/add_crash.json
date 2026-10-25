@@ -1,7 +1,7 @@
 {
-  "submission": "submissions/add_crash.c",
+  "submission": "submissions/add/add_crash.c",
   "grade": 43.5,
-  "rules_sha256": "7edd460611d11b8401e2fc285ead6b71b9ac3c59a4b9e2a1d66a2e9d483d1641",
+  "rules_sha256": "b993f21f617bb6825b4523d28fd8f9f4c7c583d108c0b6a9484c701f83810654",
   "tool_versions": {
     "python": "3.14.4",
     "gcc": "gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0",
@@ -9,7 +9,7 @@
     "lizard": "1.24.2"
   },
   "first_pass": {
-    "source": "submissions/add_crash.c",
+    "source": "submissions/add/add_crash.c",
     "checks": {
       "has_main": true,
       "uses_scanf": true,
@@ -18,7 +18,7 @@
     },
     "compiled": true,
     "compiler_output": "",
-    "binary": "build/add_crash",
+    "binary": "build/add/add_crash",
     "smoke": {
       "status": "crash",
       "returncode": -11,
@@ -398,10 +398,10 @@
       "score": 1.0,
       "evidence": {
         "max_similarity": 0.6,
-        "closest_file": "submissions/add_syntax_error.c",
+        "closest_file": "submissions/add/add_syntax_error.c",
         "flag_threshold": 0.85
       },
-      "feedback": "max similarity 0.60 with submissions/add_syntax_error.c (not flagged)",
+      "feedback": "max similarity 0.60 with submissions/add/add_syntax_error.c (not flagged)",
       "weight": 0.1,
       "advice": "Write the solution yourself and be ready to explain every line."
     }

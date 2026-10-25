@@ -78,5 +78,31 @@
       "advice": "Write the solution yourself and be ready to explain every line.",
       "params": { "corpus_dir": "submissions/search/", "flag_threshold": 0.85 }
     }
-  ]
+  ],
+  "usefulness_limitations": {
+    "usefulness": [
+      {
+        "use_case": "Explaining a wrong answer to the student",
+        "example": "search_off_by_one.c prints -1 when the target 8 is the last of 8 numbers. The report shows the input, the expected 7, and says the loop probably stops one step early (i < n - 1).",
+        "benefit": "The student sees the exact input that breaks the program and the likely line to fix."
+      },
+      {
+        "use_case": "Catching a correct but slow solution",
+        "example": "search_sort.c passes all 8 tests and all 8 edge cases, but it bubble sorts first and times out at n = 100000, so it gets 0 for complexity.",
+        "benefit": "Tests alone would give full marks; the timing shows the algorithm is O(n^2)."
+      }
+    ],
+    "limitations": [
+      {
+        "limitation": "O(n log n) passes as O(n)",
+        "example": "A version that sorts with qsort and then does a binary search measured a growth of 0.69, the same as search_good.c, and was judged O(n). Reading the input takes most of the time.",
+        "mitigation": "The report gives the measured growth, so a teacher can read the code to check the class."
+      },
+      {
+        "limitation": "A crash at a large size looks like a slow program",
+        "example": "search_crash.c is O(n), but its recursion is a million calls deep at n = 1000000 and runs out of stack. The report says it is slower than O(n) or broken.",
+        "mitigation": "The evidence in the JSON report shows the status was a crash, not a timeout."
+      }
+    ]
+  }
 }

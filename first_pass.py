@@ -13,7 +13,7 @@ originality). A crash does not set can_run to False: the other analyzers
 still run, and io_tests and sanitizer_run will show what went wrong.
 
 Try it by hand:
-    python3 first_pass.py rules/add.json submissions/*.c
+    python3 first_pass.py rules/add.json submissions/add/*.c
 """
 
 import os
@@ -44,7 +44,7 @@ def strip_comments(code):
     return re.sub(r"//[^\n]*", " ", code)
 
 
-def compile_plain(source_path, build_dir="build"):
+def compile_plain(source_path, build_dir):
     """Compile with plain gcc. Returns (binary path or None, compiler messages)."""
     os.makedirs(build_dir, exist_ok=True)
     name = os.path.splitext(os.path.basename(source_path))[0]
@@ -64,7 +64,7 @@ def run_first_pass(source_path, rules):
         code = strip_comments(f.read())
     checks = {name: bool(re.search(pattern, code)) for name, pattern in CHECKS.items()}
 
-    binary, compiler_output = compile_plain(source_path)
+    binary, compiler_output = compile_plain(source_path, rules["build_dir"])
 
     smoke = None
     if binary is not None:

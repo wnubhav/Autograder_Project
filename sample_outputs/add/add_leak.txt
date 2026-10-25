@@ -1,28 +1,24 @@
-===== Grading report for add_syntax_error.c =====
-Overall grade: 26.0 / 100
-First pass: does not compile
+===== Grading report for add_leak.c =====
+Overall grade: 86.5 / 100
+First pass: compiled, smoke run ok
 
 Metric          Weight    Score  Contribution  Feedback
-correctness         20     0/20           0.0  not run: does not compile
-syntax              10     0/10           0.0  does not compile with -Wall -Wextra -Werror -std=c11: submissions/add_syntax_error.c:6:27: error: expected ‘;’ before ‘printf’
-structure           10     8/10           8.0  1 problem(s); first: cppcheck line 6: There is an unknown macro here somewhere. Configuration is required. If scanf is a macro then please configure it. [unknownMacro]
+correctness         20    20/20          20.0  10 of 10 tests pass
+syntax              10    10/10          10.0  compiles cleanly with -Wall -Wextra -Werror -std=c11
+structure           10     6/10           6.0  2 problem(s); first: cppcheck line 13: Memory leak: numbers [memleak]
 modularity          10     5/10           5.0  only main() is defined; move a piece of the work into a helper function and call it from main
-logical             10     0/10           0.0  not run: does not compile
-complexity          10     0/10           0.0  not run: does not compile
-memory_safety       10     0/10           0.0  not run: does not compile
-readability         10     3/10           3.0  3/10 from openai/gpt-oss-120b: Unclear variable names (a, b); No comments explaining purpose; Missing semicolon after scanf reduces readability
-originality         10    10/10          10.0  max similarity 0.76 with submissions/add.c (not flagged)
+logical             10    10/10          10.0  20 of 20 edge cases match the reference
+complexity          10    10/10          10.0  O(1) confirmed (required O(1))
+memory_safety       10   7.5/10           7.5  1 problem(s); first: memory leak at add_leak.c:8 in main() (Direct leak of 16 byte(s) in 1 object(s)) on input '7 5'
+readability         10     8/10           8.0  8/10 from openai/gpt-oss-120b: Clear naming but could be more descriptive; Helpful comment about memory management; Consistent indentation and spacing
+originality         10    10/10          10.0  max similarity 0.45 with submissions/add/corpus/ai/gpt_oss_120b.c (not flagged)
 
 --- Where you failed ---
-The tests could not be run: does not compile.
+Nothing: every test and edge case gave the expected answer.
 
 --- Suggestions to raise the grade ---
-- correctness: Run your program on the failing inputs above, including very large and very small numbers.
-- syntax: Fix every compiler warning; compile with -Wall -Wextra to see them.
 - structure: Keep each function short and simple, and fix what cppcheck reports.
 - modularity: Move the real work into a helper function, for example int add(int a, int b), and call it from main.
-- logical: Test negatives, zero and sums beyond the int range; use long long (and %lld) for the sum.
-- complexity: Compute the sum directly with a + b instead of a loop that grows with the numbers.
 - memory_safety: Free what you allocate, never use a null or freed pointer, and avoid signed overflow.
 - readability: Use clear names, consistent indentation and a short comment above each function.
 

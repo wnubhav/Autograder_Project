@@ -1,7 +1,7 @@
 {
-  "submission": "submissions/add_syntax_error.c",
-  "grade": 26.0,
-  "rules_sha256": "7edd460611d11b8401e2fc285ead6b71b9ac3c59a4b9e2a1d66a2e9d483d1641",
+  "submission": "submissions/add/add_good.c",
+  "grade": 99.0,
+  "rules_sha256": "b993f21f617bb6825b4523d28fd8f9f4c7c583d108c0b6a9484c701f83810654",
   "tool_versions": {
     "python": "3.14.4",
     "gcc": "gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0",
@@ -9,138 +9,174 @@
     "lizard": "1.24.2"
   },
   "first_pass": {
-    "source": "submissions/add_syntax_error.c",
+    "source": "submissions/add/add_good.c",
     "checks": {
       "has_main": true,
       "uses_scanf": true,
       "uses_printf": true,
       "has_return": true
     },
-    "compiled": false,
-    "compiler_output": "submissions/add_syntax_error.c: In function \u2018main\u2019:\nsubmissions/add_syntax_error.c:6:27: error: expected \u2018;\u2019 before \u2018printf\u2019\n    6 |     scanf(\"%d %d\", &a, &b)\n      |                           ^\n      |                           ;\n    7 |     printf(\"%d\\n\", a + b);\n      |     ~~~~~~                 \n",
-    "binary": null,
-    "smoke": null,
+    "compiled": true,
+    "compiler_output": "",
+    "binary": "build/add/add_good",
+    "smoke": {
+      "status": "ok",
+      "returncode": 0,
+      "signal": null,
+      "stdout": "12\n",
+      "stderr": "",
+      "time_s": 0.005
+    },
     "suspected_infinite_loop": false,
-    "can_run": false
+    "can_run": true
   },
   "metrics": {
     "correctness": {
-      "score": 0.0,
+      "score": 1.0,
       "evidence": {
-        "skipped": "does not compile"
+        "passed": 10,
+        "total": 10,
+        "failures": []
       },
-      "feedback": "not run: does not compile",
+      "feedback": "10 of 10 tests pass",
       "weight": 0.2,
       "advice": "Run your program on the failing inputs above, including very large and very small numbers."
     },
     "syntax": {
-      "score": 0.0,
+      "score": 1.0,
       "evidence": {
         "flags": "-Wall -Wextra -Werror -std=c11",
         "warnings": [],
-        "errors": [
-          "submissions/add_syntax_error.c:6:27: error: expected \u2018;\u2019 before \u2018printf\u2019"
-        ]
+        "errors": []
       },
-      "feedback": "does not compile with -Wall -Wextra -Werror -std=c11: submissions/add_syntax_error.c:6:27: error: expected \u2018;\u2019 before \u2018printf\u2019",
+      "feedback": "compiles cleanly with -Wall -Wextra -Werror -std=c11",
       "weight": 0.1,
       "advice": "Fix every compiler warning; compile with -Wall -Wextra to see them."
     },
     "structure": {
-      "score": 0.8,
+      "score": 1.0,
       "evidence": {
         "functions": [
           {
-            "name": "main",
-            "line": 3,
+            "name": "add",
+            "line": 5,
             "cyclomatic": 1,
-            "length": 7
-          }
-        ],
-        "cppcheck": [
+            "length": 4
+          },
           {
-            "line": 6,
-            "severity": "error",
-            "id": "unknownMacro",
-            "message": "There is an unknown macro here somewhere. Configuration is required. If scanf is a macro then please configure it."
+            "name": "main",
+            "line": 10,
+            "cyclomatic": 2,
+            "length": 9
           }
         ],
-        "problems": [
-          "cppcheck line 6: There is an unknown macro here somewhere. Configuration is required. If scanf is a macro then please configure it. [unknownMacro]"
-        ]
+        "cppcheck": [],
+        "problems": []
       },
-      "feedback": "1 problem(s); first: cppcheck line 6: There is an unknown macro here somewhere. Configuration is required. If scanf is a macro then please configure it. [unknownMacro]",
+      "feedback": "all functions within limits (cyclomatic <= 8, length <= 40); cppcheck found nothing",
       "weight": 0.1,
       "advice": "Keep each function short and simple, and fix what cppcheck reports."
     },
     "modularity": {
-      "score": 0.5,
+      "score": 1.0,
       "evidence": {
         "functions_defined": [
+          "add",
           "main"
         ],
-        "helpers_used": [],
+        "helpers_used": [
+          "add"
+        ],
         "helpers_unused": [],
-        "counted": 1,
+        "counted": 2,
         "expected_min": 2
       },
-      "feedback": "only main() is defined; move a piece of the work into a helper function and call it from main",
+      "feedback": "work is split into 2 functions: add, main",
       "weight": 0.1,
       "advice": "Move the real work into a helper function, for example int add(int a, int b), and call it from main."
     },
     "logical": {
-      "score": 0.0,
+      "score": 1.0,
       "evidence": {
-        "skipped": "does not compile"
+        "passed": 20,
+        "total": 20,
+        "cases": [
+          "negatives",
+          "zero",
+          "int_overflow"
+        ],
+        "failures": []
       },
-      "feedback": "not run: does not compile",
+      "feedback": "20 of 20 edge cases match the reference",
       "weight": 0.1,
       "advice": "Test negatives, zero and sums beyond the int range; use long long (and %lld) for the sum."
     },
     "complexity": {
-      "score": 0.0,
+      "score": 1.0,
       "evidence": {
-        "skipped": "does not compile"
+        "required": "O(1)",
+        "estimated": "O(1)",
+        "growth": 0.05,
+        "timings": [
+          {
+            "n": 1000000,
+            "median_s": 0.004
+          },
+          {
+            "n": 10000000,
+            "median_s": 0.005
+          },
+          {
+            "n": 100000000,
+            "median_s": 0.005
+          }
+        ]
       },
-      "feedback": "not run: does not compile",
+      "feedback": "O(1) confirmed (required O(1))",
       "weight": 0.1,
       "advice": "Compute the sum directly with a + b instead of a loop that grows with the numbers."
     },
     "memory_safety": {
-      "score": 0.0,
+      "score": 1.0,
       "evidence": {
-        "skipped": "does not compile"
+        "flags": "-fsanitize=address,undefined",
+        "inputs_run": 10,
+        "problems": [],
+        "timeouts": []
       },
-      "feedback": "not run: does not compile",
+      "feedback": "ASan/UBSan clean on 10 input(s)",
       "weight": 0.1,
       "advice": "Free what you allocate, never use a null or freed pointer, and avoid signed overflow."
     },
     "readability": {
-      "score": 0.3,
+      "score": 0.9,
       "evidence": {
         "model": "openai/gpt-oss-120b",
         "temperature": 0,
         "seed": 42,
-        "raw_response": "{\"score\":3,\"reasons\":[\"Unclear variable names (a, b)\",\"No comments explaining purpose\",\"Missing semicolon after scanf reduces readability\"]}",
-        "cache_file": "cache/llm/e941fa3a8d3f435e86890341384e613e84a94cb1fa8e90d95a3ab23f5aa0f3f9.json"
+        "raw_response": "{\"score\":9,\"reasons\":[\"clear variable and function names\",\"helpful comment on function behavior\",\"consistent indentation and spacing\"]}",
+        "cache_file": "cache/llm/1dfff44a0a510e528fa93ba8594cb727daa194eba38a27bb4ae31de877816fa9.json"
       },
-      "feedback": "3/10 from openai/gpt-oss-120b: Unclear variable names (a, b); No comments explaining purpose; Missing semicolon after scanf reduces readability",
+      "feedback": "9/10 from openai/gpt-oss-120b: clear variable and function names; helpful comment on function behavior; consistent indentation and spacing",
       "weight": 0.1,
       "advice": "Use clear names, consistent indentation and a short comment above each function."
     },
     "originality": {
       "score": 1.0,
       "evidence": {
-        "max_similarity": 0.76,
-        "closest_file": "submissions/add.c",
+        "max_similarity": 1.0,
+        "closest_file": "submissions/add/add_copy.c",
         "flag_threshold": 0.85
       },
-      "feedback": "max similarity 0.76 with submissions/add.c (not flagged)",
+      "feedback": "max similarity 1.00 with submissions/add/add_copy.c: flagged for the teacher",
+      "flag": "suspected copying: similarity 1.00 with submissions/add/add_copy.c (threshold 0.85); please check by hand",
       "weight": 0.1,
       "advice": "Write the solution yourself and be ready to explain every line."
     }
   },
-  "flags": [],
+  "flags": [
+    "originality: suspected copying: similarity 1.00 with submissions/add/add_copy.c (threshold 0.85); please check by hand"
+  ],
   "usefulness_limitations": {
     "usefulness": [
       {

@@ -46,14 +46,14 @@ SLOWDOWN = 3  # sanitized programs run roughly 2-3x slower
 UBSAN_LINE = re.compile(r"^(\S+?):(\d+):\d+: runtime error: (.+)$")
 ASAN_LINE = re.compile(r"ERROR: AddressSanitizer: (\S+)")
 LEAK_LINE = re.compile(r"^(Direct|Indirect) leak of .+")
-# A stack frame, e.g. "#1 0x5880380a629e in main submissions/add_leak.c:8"
+# A stack frame, e.g. "#1 0x5880380a629e in main submissions/add/add_leak.c:8"
 FRAME_LINE = re.compile(r"#\d+ 0x[0-9a-f]+ in (\S+) (\S+?):(\d+)")
 
 
-def compile_sanitized(source_path, flags):
-    os.makedirs("build", exist_ok=True)
+def compile_sanitized(source_path, flags, build_dir):
+    os.makedirs(build_dir, exist_ok=True)
     name = os.path.splitext(os.path.basename(source_path))[0]
-    binary = os.path.join("build", name + ".asan")
+    binary = os.path.join(build_dir, name + ".asan")
     result = subprocess.run(
         ["gcc", *shlex.split(flags), "-fno-sanitize-recover=all", "-g",
          "-fno-omit-frame-pointer", source_path, "-o", binary, "-lm"],
@@ -100,7 +100,7 @@ def input_files(params, rules):
 
 def analyze(source_path, first_pass, params, rules):
     penalty = params.get("penalty_per_problem", 0.25)
-    binary = compile_sanitized(source_path, params["flags"])
+    binary = compile_sanitized(source_path, params["flags"], rules["build_dir"])
     source_name = os.path.basename(source_path)
 
     distinct = {}   # (kind, where) -> problem, with the first input that showed it

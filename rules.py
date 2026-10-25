@@ -4,12 +4,17 @@ Reads the instructor's rules JSON, checks that it makes sense, and records the
 file's SHA-256 hash. The hash goes into every report, so anyone can confirm
 which exact rules file produced a grade.
 
+The rules name is the file name without .json (rules/add.json gives "add").
+Compiled programs go to build/<name>/ and reports to reports/<name>/, so two
+problems never share a folder.
+
 Try it by hand:
     python3 rules.py rules/add.json
 """
 
 import hashlib
 import json
+import os
 
 REQUIRED_TOP = ["time_limit_s", "memory_limit_mb", "sample_input", "metrics"]
 REQUIRED_METRIC = ["name", "analyzer", "weight", "params"]
@@ -47,6 +52,8 @@ def load_rules(path):
         raise ValueError(f"weights add up to {total}, not 1")
 
     rules["sha256"] = hashlib.sha256(raw).hexdigest()
+    rules["name"] = os.path.splitext(os.path.basename(path))[0]
+    rules["build_dir"] = os.path.join("build", rules["name"])
     return rules
 
 

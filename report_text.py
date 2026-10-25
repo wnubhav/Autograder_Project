@@ -5,39 +5,14 @@ Sections:
   2. flags for the teacher (suspected copying)
   3. "Where you failed": failing tests and edge cases with input, expected, got, why
   4. "Suggestions to raise the grade": the rules' advice line of every metric below full marks
-  5. a short usefulness and limitations section (the same for every submission)
+  5. a short usefulness and limitations section, taken from the rules file
+     ("usefulness_limitations"), so each problem shows its own examples
 """
 import os
 import textwrap
 
 # Show at most this many failures per metric; the rest are in the JSON report.
 MAX_FAILURES = 3
-
-# Real cases from our sample submissions. Also saved in the JSON report.
-USEFULNESS_LIMITATIONS = {
-    "usefulness": [
-        {"use_case": "Explaining a wrong answer to the student",
-         "example": "add.c prints -2147483648 for the input 2147483647 1. The report "
-                    "shows the input, the expected 2147483648, what the program printed, "
-                    "and says to use long long.",
-         "benefit": "The student sees exactly which input breaks the program and how to fix it."},
-        {"use_case": "Finding copies for the teacher",
-         "example": "add_copy.c is add_good.c with every name changed. The agent still "
-                    "finds a similarity of 1.00 and raises a flag.",
-         "benefit": "The teacher checks only the flagged pairs instead of every submission."},
-    ],
-    "limitations": [
-        {"limitation": "Short programs look copied even when they are not",
-         "example": "add.c has a similarity of 1.00 with an answer from the qwen LLM, "
-                    "because the obvious 5-line solution is the same for everyone.",
-         "mitigation": "A flag never lowers the grade; the teacher decides."},
-        {"limitation": "The readability score is the opinion of an LLM",
-         "example": "add_syntax_error.c is neatly written but got 3/10 for one missing ';', "
-                    "while the more cramped add.c got 6/10.",
-         "mitigation": "Readability is only 10% of the grade, and answers are cached so "
-                       "the score does not change between runs."},
-    ],
-}
 
 
 def first_pass_status(fp):
@@ -112,14 +87,14 @@ def where_you_failed(metrics):
     return lines
 
 
-def usefulness_lines():
+def usefulness_lines(examples):
     lines = ["Useful for:"]
-    for i, u in enumerate(USEFULNESS_LIMITATIONS["usefulness"], 1):
+    for i, u in enumerate(examples["usefulness"], 1):
         lines += [f"  {i}. {u['use_case']}",
                   wrap("Example: " + u["example"], "     "),
                   wrap("Benefit: " + u["benefit"], "     ")]
     lines.append("Limits of this report:")
-    for i, l in enumerate(USEFULNESS_LIMITATIONS["limitations"], 1):
+    for i, l in enumerate(examples["limitations"], 1):
         lines += [f"  {i}. {l['limitation']}",
                   wrap("Example: " + l["example"], "     "),
                   wrap("Fix: " + l["mitigation"], "     ")]
@@ -127,7 +102,7 @@ def usefulness_lines():
 
 
 def full_report(report):
-    """The text saved as reports/<name>.txt."""
+    """The text saved as reports/<rules name>/<name>.txt."""
     metrics = report["metrics"]
     lines = [f"===== Grading report for {os.path.basename(report['submission'])} =====",
              f"Overall grade: {report['grade']:.1f} / 100",
@@ -153,6 +128,7 @@ def full_report(report):
                    for name, r in metrics.items() if r["score"] < 1]
     lines += suggestions or ["- None: full marks on every metric."]
 
-    lines += ["", "--- Usefulness & limitations of this evaluation ---"]
-    lines += usefulness_lines()
+    if report.get("usefulness_limitations"):
+        lines += ["", "--- Usefulness & limitations of this evaluation ---"]
+        lines += usefulness_lines(report["usefulness_limitations"])
     return "\n".join(lines) + "\n"

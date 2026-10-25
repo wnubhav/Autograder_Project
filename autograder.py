@@ -4,12 +4,12 @@ For each submission:
   1. run the first pass (regex checks, plain compile, smoke run)
   2. run the analyzer named by each metric in the rules file
   3. grade = 100 x sum(weight x score)
-  4. print a summary and save reports/<name>.json and reports/<name>.txt
+  4. print a summary and save reports/<rules name>/<name>.json and .txt
 
 A metric whose analyzer is not written yet scores 0, and the summary says so.
 
 Usage:
-    python3 autograder.py rules/add.json submissions/*.c
+    python3 autograder.py rules/add.json submissions/add/*.c
 """
 
 import json
@@ -22,7 +22,7 @@ import lizard
 
 from analyzers import NEEDS_BINARY, REGISTRY
 from first_pass import run_first_pass
-from report_text import USEFULNESS_LIMITATIONS, first_pass_status, full_report
+from report_text import first_pass_status, full_report
 from rules import load_rules
 
 
@@ -80,12 +80,12 @@ def grade_submission(source_path, rules, versions):
         "first_pass": first_pass,
         "metrics": metrics,
         "flags": flags,
-        "usefulness_limitations": USEFULNESS_LIMITATIONS,
+        "usefulness_limitations": rules.get("usefulness_limitations"),
     }
 
 
 def summary_text(report):
-    """The short summary printed while grading (the full report goes to reports/<name>.txt)."""
+    """The short summary printed while grading (the full report is saved as a .txt file)."""
     lines = [f"== {os.path.basename(report['submission'])}",
              f"   first pass: {first_pass_status(report['first_pass'])}"]
     missing = 0
@@ -113,17 +113,18 @@ def main():
 
     rules = load_rules(sys.argv[1])
     versions = tool_versions()
-    os.makedirs("reports", exist_ok=True)
+    report_dir = os.path.join("reports", rules["name"])
+    os.makedirs(report_dir, exist_ok=True)
 
     for source_path in sys.argv[2:]:
         report = grade_submission(source_path, rules, versions)
         text = summary_text(report)
         print(text, end="")
         name = os.path.splitext(os.path.basename(source_path))[0]
-        json_path = os.path.join("reports", name + ".json")
+        json_path = os.path.join(report_dir, name + ".json")
         with open(json_path, "w") as f:
             json.dump(report, f, indent=2)
-        text_path = os.path.join("reports", name + ".txt")
+        text_path = os.path.join(report_dir, name + ".txt")
         with open(text_path, "w") as f:
             f.write(full_report(report))
         print(f"   reports: {json_path}, {text_path}\n")

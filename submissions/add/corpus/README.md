@@ -1,9 +1,10 @@
 # Originality corpus
 
-Reference programs for the `originality` metric (`analyzers/similarity_flag.py`).
-The grader compares every submission with every `*.c` file under `submissions/`,
+Reference programs for the add problem's `originality` metric
+(`analyzers/similarity_flag.py`). The grader compares every add submission with
+every `*.c` file under `submissions/add/` (the `corpus_dir` in `rules/add.json`),
 including this folder, but it never grades these files: it is run on
-`submissions/*.c`, which does not go into sub-folders.
+`submissions/add/*.c`, which does not go into sub-folders.
 
 - `ai/`: answers from LLMs to a short prompt, as a student might get them.
 - `web/`: solutions copied from tutorial websites.
