@@ -46,6 +46,12 @@ Two problems are included, to show the same grader works for more than one task:
 
    gcc on Ubuntu already includes the address and undefined behaviour sanitizers.
 
+   **Tool versions.** The sample outputs were made with gcc 15.2 and cppcheck 2.19
+   (each report lists the exact versions under `tool_versions`). Other versions can
+   give different grades: `search_crash.c` gets 77.8 with cppcheck 2.19 but 81.8 with
+   cppcheck 2.13, because 2.13 does not report two of the warnings. Use the same
+   versions to reproduce the grades in `sample_outputs/`.
+
 3. Get the code and install the Python package (lizard) in a virtual environment:
 
        git clone https://github.com/wnubhav/Autograder_Project.git
@@ -96,7 +102,7 @@ A short summary is printed for each submission, and two files are written:
 | `sample_outputs/add/`, `sample_outputs/search/` | the final `.json` and `.txt` reports for all sample submissions |
 | `reports/<rules name>/` | reports from your latest run (not committed) |
 | `build/<rules name>/` | compiled programs (not committed) |
-| `LIMITATIONS.md` | concrete cases where the agent gives a wrong or unreliable verdict |
+| `USEFULNESS_AND_LIMITATIONS.md` | four concrete cases where the agent helps and four where its verdict is wrong or unreliable |
 
 ## Sample outputs
 

@@ -9,3 +9,6 @@ build/
 # Generated reports (rebuilt on every run). The committed final outputs are in sample_outputs/.
 reports/*
 !reports/.gitkeep
+
+# Local project notes, never committed
+CLAUDE.md
