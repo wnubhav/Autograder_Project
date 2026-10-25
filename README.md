@@ -12,15 +12,20 @@ program printed and why. Suspected copies (from other students, websites or LLMs
 flagged for the teacher but never lower the grade. The same submission and the same
 rules always give the same grade.
 
-The metrics, weights, limits and parameters all live in `rules/add.json`, not in the code.
+The metrics, weights, limits and parameters all live in a rules file, not in the code.
+Two problems are included, to show the same grader works for more than one task:
+
+- `rules/add.json`: add two integers (the problem from the brief)
+- `rules/search.json`: linear search. Input is n, then n integers, then a target;
+  the program prints the 0-based index of the first match, or -1
 
 | Metric | Analyzer | What it checks |
 |---|---|---|
-| correctness | `io_tests` | output on the tests in `tests/add/` |
+| correctness | `io_tests` | output on the tests in `tests/<problem>/` |
 | syntax | `compiler_warnings` | errors and warnings with the rules' gcc flags |
 | structure | `static_analysis` | function size and branching (lizard) and cppcheck findings |
 | modularity | `function_split` | whether the work is split into helper functions |
-| logical | `edge_case_runner` | tricky and random inputs compared with a reference solution |
+| logical | `edge_case_runner` | tricky inputs compared with a reference solution (built-in generators for add, a folder of inputs for search) |
 | complexity | `complexity_estimator` | how the run time grows with the input |
 | memory_safety | `sanitizer_run` | AddressSanitizer and UndefinedBehaviorSanitizer reports |
 | readability | `llm_review` | an LLM on Groq (temperature 0, fixed seed, cached answers) |
@@ -59,6 +64,7 @@ The metrics, weights, limits and parameters all live in `rules/add.json`, not in
 ## Run
 
     python3 autograder.py rules/add.json submissions/*.c
+    python3 autograder.py rules/search.json submissions/search/*.c
 
 You can also grade one file: `python3 autograder.py rules/add.json submissions/add.c`.
 A short summary is printed for each submission, and two files are written:
@@ -77,20 +83,23 @@ A short summary is printed for each submission, and two files are written:
 | `rules.py` | loads and checks the rules file |
 | `report_text.py` | writes the student report in `reports/<name>.txt` |
 | `analyzers/` | one file per analyzer; `__init__.py` maps analyzer names from the rules to functions |
-| `rules/` | the rules files (`add.json`) |
-| `tests/add/` | test inputs (`NN.in`) and expected outputs (`NN.out`) |
-| `reference/` | the correct solution that the edge-case analyzer compares against |
-| `submissions/` | sample student programs: correct, wrong, crashing, infinite loop, not compiling, leaking, slow, messy, copied |
+| `rules/` | the rules files (`add.json`, `search.json`) |
+| `tests/add/`, `tests/search/` | test inputs (`NN.in`) and expected outputs (`NN.out`); `tests/search/edge/` holds the search edge-case inputs |
+| `reference/` | the correct solutions that the edge-case analyzer compares against |
+| `submissions/` | sample add programs: correct, wrong, crashing, infinite loop, not compiling, leaking, slow, messy, copied |
+| `submissions/search/` | sample search programs: correct, off by one, crashing on n = 0, sorting first |
 | `submissions/corpus/` | LLM answers (`ai/`) and website solutions (`web/`), used only for the originality check, never graded |
 | `cache/llm/` | saved LLM readability answers, so reruns give the same score |
-| `sample_outputs/` | the final `.json` and `.txt` reports for all sample submissions |
+| `sample_outputs/` | the final `.json` and `.txt` reports for all sample submissions (search ones in `sample_outputs/search/`) |
 | `reports/` | reports from your latest run (not committed) |
 | `build/` | compiled programs (not committed) |
 | `LIMITATIONS.md` | concrete cases where the agent gives a wrong or unreliable verdict |
 
 ## Sample outputs
 
-`sample_outputs/` holds the reports for every program in `submissions/`:
+`sample_outputs/` holds the reports for every program in `submissions/`.
+
+Add two integers (`rules/add.json`):
 
 | Submission | Grade | Note |
 |---|---|---|
@@ -103,6 +112,15 @@ A short summary is printed for each submission, and two files are written:
 | add_loop.c | 73.5 | adds by counting, so it is O(n); flagged against an LLM answer |
 | add_messy.c | 77.5 | correct, but one long branchy main and a warning |
 | add_syntax_error.c | 26.0 | does not compile |
+
+Linear search (`rules/search.json`, reports in `sample_outputs/search/`):
+
+| Submission | Grade | Note |
+|---|---|---|
+| search_good.c | 99.0 | correct and clean (same as `reference/search.c`) |
+| search_off_by_one.c | 80.0 | loop stops at `n - 1`, so a match in the last position is missed |
+| search_crash.c | 77.8 | recursive search reads `arr[0]` before checking n, crashes on n = 0 |
+| search_sort.c | 87.0 | correct, but bubble sorts first (O(n^2)), times out on large inputs |
 
 The run times in the `complexity` feedback of `add_loop` change a little between runs;
 the grades, scores and flags do not.

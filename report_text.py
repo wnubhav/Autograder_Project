@@ -66,12 +66,18 @@ def why_from_status(status):
     return "the program printed a wrong answer"
 
 
+def show(text):
+    """Line up a multi-line input under the first line, and cut very long lines."""
+    lines = [line if len(line) <= 60 else line[:60] + " ..." for line in text.split("\n")]
+    return ("\n" + " " * 13).join(lines)
+
+
 def failure_block(title, failure, why):
     got = failure["got"] if failure["got"] else "(nothing)"
     return [f"{title}",
-            f"   INPUT:    {failure['input']}",
-            f"   EXPECTED: {failure['expected']}",
-            f"   GOT:      {got}",
+            f"   INPUT:    {show(failure['input'])}",
+            f"   EXPECTED: {show(failure['expected'])}",
+            f"   GOT:      {show(got)}",
             textwrap.fill(why, width=72, initial_indent="   WHY:      ",
                           subsequent_indent=" " * 13)]
 

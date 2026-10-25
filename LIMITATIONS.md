@@ -4,16 +4,19 @@ Notes collected while building the agent, for the "Usefulness and Limitations"
 section of the final report. Each one names a concrete case where the agent
 gives a wrong or unreliable verdict.
 
-## Edge-case inputs only fit this problem's input format
+## Edge-case inputs: generators only for add, hand-written files otherwise
 
-The edge-case generators in `analyzers/edge_case_runner.py` are written for
-this problem's input: two integers on one line. Case names like `negatives`,
-`zero` and `int_overflow` make pairs such as `-7 5` or `2147483647 1`.
-For a different problem, for example one that reads an array or a string,
-these inputs would be meaningless. The program would just get two numbers
-it does not expect, and the agent would report mismatches that say nothing
-about the student's logic. A new problem needs new generators written in
-the code; only the case names and counts can be changed from the rules file.
+The built-in edge-case generators in `analyzers/edge_case_runner.py` are
+written for the add problem: two integers on one line. Case names like
+`negatives`, `zero` and `int_overflow` make pairs such as `-7 5` or
+`2147483647 1`, plus seeded random ones. For linear search these pairs would
+be meaningless, so `rules/search.json` uses `"inputs_dir"` instead: a folder
+of hand-written inputs (`tests/search/edge/`). That works for any input
+format, but the agent then only checks what the instructor thought of. There
+are no random inputs, so a bug that shows up only on, say, a target that
+appears exactly twice near the end is never tested unless someone wrote that
+file. A new problem gets either new generators in the code or a folder of
+files written by hand.
 
 ## Timing close to the limit can turn a pass into a timeout
 
@@ -177,3 +180,25 @@ Groq's terms, not by us. A school that is not allowed to share student work
 with outside services cannot use this metric as it is. It would need a local
 model (the earlier Ollama plan) or the readability metric removed from the
 rules.
+
+## Complexity: O(n log n) passes as O(n)
+
+`rules/search.json` requires O(n). `submissions/search/search_sort.c` bubble
+sorts first, which is O(n^2); it times out at n = 100,000 and correctly gets
+0. But we also tried a version that sorts with `qsort` (O(n log n)) and then
+does a binary search. It gave a growth of 0.69, exactly like the real linear
+search (`search_good.c`, also 0.69), and was judged "O(n) confirmed". Reading
+n numbers with `scanf` already takes time proportional to n and is most of
+the run time, and log n changes too little between n = 10,000 and
+n = 1,000,000 to be seen. So a student who sorts first with a good sort gets
+full complexity marks for a slower algorithm.
+
+## Complexity: a crash at a large size looks like a slow program
+
+`submissions/search/search_crash.c` searches recursively, one call per
+element. Its algorithm is O(n), but at n = 1,000,000 the recursion is a
+million calls deep and the program runs out of stack and crashes. The
+complexity metric then says "program did not finish normally at size
+1000000 (crash), so it is slower than O(n) or broken" and gives 0. The real
+problem is the recursion depth, not the growth of the running time, and the
+message does not say which of the two it is.

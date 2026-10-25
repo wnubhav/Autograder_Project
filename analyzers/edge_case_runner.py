@@ -13,11 +13,14 @@ the input, the expected and actual output, and a one-line reason that
 depends on the case name.
 
 The generators below assume this problem's input format: two integers on
-one line. A new problem needs its own generators (see LIMITATIONS.md).
+one line. For any other problem, the rules can instead give
+params["inputs_dir"], a folder of hand-written NAME.in files. Each file is
+one case called NAME, and params["reasons"] can give a reason per NAME.
 
 score = inputs where the student matches the reference / all inputs
 """
 
+import glob
 import os
 import random
 
@@ -59,8 +62,24 @@ def random_pair(case, rng, i):
     raise ValueError(f"no input generator for case {case!r}")
 
 
+DEFAULT_REASON = "output differs from the reference solution on this input"
+
+
+def read_inputs_dir(folder):
+    """Return a list of (case, input text), one per NAME.in file, sorted by name."""
+    inputs = []
+    for path in sorted(glob.glob(os.path.join(folder, "*.in"))):
+        with open(path) as f:
+            inputs.append((os.path.basename(path)[:-3], f.read()))
+    if not inputs:
+        raise ValueError(f"no .in files in {folder}")
+    return inputs
+
+
 def make_inputs(params):
     """Return a list of (case, input text), the same list on every run."""
+    if "inputs_dir" in params:
+        return read_inputs_dir(params["inputs_dir"])
     rng = random.Random(params.get("seed", 42))
     count = params.get("random_per_case", 3)
     inputs = []
@@ -91,7 +110,7 @@ def analyze(source_path, first_pass, params, rules):
             continue
         # The case's reason only fits a wrong answer, not a crash or a timeout.
         if got["status"] == "ok":
-            reason = REASONS[case]
+            reason = params.get("reasons", REASONS).get(case, DEFAULT_REASON)
         else:
             reason = f"the program did not finish normally ({got['status']}), so it gave no answer"
         failures.append({
@@ -113,6 +132,7 @@ def analyze(source_path, first_pass, params, rules):
     return {
         "score": passed / total,
         "evidence": {"passed": passed, "total": total,
-                     "cases": params["cases"], "failures": failures},
+                     "cases": params.get("cases", [case for case, _ in inputs]),
+                     "failures": failures},
         "feedback": feedback,
     }

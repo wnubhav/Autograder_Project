@@ -203,6 +203,13 @@ Week 4 in progress (2026-10-24):
   The rules SHA-256 changed; grades did not.
 - `sample_outputs/`: final .json and .txt for all 9 samples (two runs identical, second without key).
 - `README.md`: what it does, WSL/apt/pip/GROQ_API_KEY install, run command, folders, sample grades.
+- Second problem, linear search (2026-10-25): `rules/search.json` (O(n) required),
+  `tests/search/` (8 tests) and `tests/search/edge/` (8 edge inputs), `reference/search.c`,
+  `submissions/search/` (good 99.0, off_by_one 80.0, crash 77.8, sort 87.0),
+  outputs in `sample_outputs/search/`. `edge_case_runner` takes `"inputs_dir"` (NAME.in files)
+  plus optional `"reasons"` instead of `"cases"`; `complexity_estimator` takes
+  `"input_kind": "array_not_found"` instead of `"input"`. Search originality uses
+  corpus_dir `submissions/search/`. Add grades, scores, flags and text reports unchanged.
 ## Notes
 - The brief has two slips: the sample input "75" should be "7 5", and the example report lists
   the expected output of `2147483647 1` as `-2147483648` (the overflowed value). The true sum is

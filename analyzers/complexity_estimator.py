@@ -5,6 +5,11 @@ params["input"] (for add: "{n} {n}", so both numbers are n), run the program
 5 times and keep the median time. The median ignores one or two slow runs
 caused by the machine being busy.
 
+Instead of a pattern, the rules can set params["input_kind"] to
+"array_not_found": n on the first line, the numbers 0 .. n-1 on the second,
+and -1 (never in the array) as the target, so a search has to look at
+every number.
+
 Then we compare only the smallest and the largest size:
     growth = log(time ratio) / log(size ratio)
 If the time stays flat, growth is near 0 (O(1)). If the time grows as fast
@@ -31,6 +36,21 @@ CLASSES = [("O(1)", 0.3), ("O(n)", 1.5), ("O(n^2)", 2.5), ("worse than O(n^2)", 
 ORDER = [name for name, _ in CLASSES]
 
 
+def array_not_found(n):
+    return f"{n}\n" + " ".join(str(i) for i in range(n)) + "\n-1\n"
+
+
+INPUT_KINDS = {"array_not_found": array_not_found}
+
+
+def make_input(params, n):
+    if "input_kind" in params:
+        if params["input_kind"] not in INPUT_KINDS:
+            raise ValueError(f"unknown input_kind {params['input_kind']!r}, use one of {list(INPUT_KINDS)}")
+        return INPUT_KINDS[params["input_kind"]](n)
+    return params["input"].format(n=n) + "\n"
+
+
 def classify(growth):
     for name, upper in CLASSES:
         if growth < upper:
@@ -44,7 +64,7 @@ def analyze(source_path, first_pass, params, rules):
 
     timings = []  # one {"n", "median_s"} per size
     for n in params["sizes"]:
-        test_input = params["input"].format(n=n) + "\n"
+        test_input = make_input(params, n)
         times = []
         for _ in range(RUNS):
             result = sandbox.run([first_pass["binary"]], test_input,
